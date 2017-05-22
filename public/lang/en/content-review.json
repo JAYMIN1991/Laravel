@@ -1,0 +1,10 @@
+{
+  "wait" : "Please Wait",
+  "error" : {
+   "status_required" : "You must select status",
+    "remark_required" : "You must enter remarks"
+  },
+  "info":{
+    "no_history" : "No history found"
+  }
+}

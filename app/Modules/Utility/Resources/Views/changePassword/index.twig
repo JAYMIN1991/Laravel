@@ -1,0 +1,56 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('utility::change-password.index.change_password') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('utility::change-password.index.change_password') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div class="change_password_container" id="change_password_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'utility.changePassword.updatePassword','id':'form_change_password'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>{{ trans('utility::change-password.index.new_password') }}</label>
+                                    <div class="input-group date" id="date_from">
+                                        {{ form_password('new_password',{'class':'form-control','id':'new_password'}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>{{ trans('utility::change-password.index.verify_new_password') }}</label>
+                                    <div class="input-group date" id="date_from">
+                                        {{ form_password('password_confirmation',{'class':'form-control','id':'password_confirmation'}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="separator top"></div>
+                {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+                'classes' : 'margin-bottom-none padding-none-TB' } %}
+                    {% block panelBody %}
+                        {{ form_button( trans('shared::button.save'),{'type':'submit','class':'btn btn-success btn-sm','name':'button_save', 'id':'button_save'}) }}
+                        <a href="{{ route('sales.visit.index')}}" class="btn btn-default btn-sm" id="button_cancel" > {{ trans('shared::button.cancel') }}</a>
+                    {% endblock %}
+                {% endembed %}
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}
+
+

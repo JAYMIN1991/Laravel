@@ -1,0 +1,466 @@
+.sidebar.sidebar-fusion #menu > div > ul {
+    top: 60px;
+}
+
+#balnote img {
+    border: none;
+}
+
+.bg-app {
+    background-color: #ebeff2 !important;
+}
+.nomargin{margin:0px !important; }
+th .checkbox-custom i.checked {
+    color: #fff;
+}
+
+.margin5 {
+    margin: 5px;
+}
+
+.margin10 {
+    margin: 10px !important;
+}
+
+.marginR5 {
+    margin-right: 5px !important;
+}
+
+.marginR10 {
+    margin-right: 10px !important;
+}
+
+.marginR15 {
+    margin-right: 15px !important;
+}
+
+.marginT5 {
+    margin-top: 5px !important;
+}
+
+.marginT10 {
+    margin-top: 10px !important;
+}
+
+.marginT15 {
+    margin-top: 15px !important;
+}
+
+.marginB5 {
+    margin-bottom: 5px !important;
+}
+
+.marginB10 {
+    margin-bottom: 10px !important;
+}
+
+.marginB15 {
+    margin-bottom: 15px !important;
+}
+
+.marginL5 {
+    margin-left: 5px !important;
+}
+
+.marginL10 {
+    margin-left: 10px !important;
+}
+
+.marginL15 {
+    margin-left: 15px !important;
+}
+
+.padding5 {
+    padding: 5px !important;
+}
+
+.padding10 {
+    padding: 10px !important;
+}
+
+.padding15 {
+    padding: 15px !important;
+}
+
+.padding15 {
+    padding: 15px !important;
+}
+
+.padingR5 {
+    padding-right: 5px !important;
+}
+
+.padingR10 {
+    padding-right: 10px !important;
+}
+
+.padingR15 {
+    padding-right: 15px !important;
+}
+
+.padingT5 {
+    padding-top: 5px !important;
+}
+
+.padingT10 {
+    padding-top: 10px !important;
+}
+
+.padingT15 {
+    padding-top: 15px !important;
+}
+
+.padingB5 {
+    padding-bottom: 5px !important;
+}
+
+.padingB10 {
+    padding-bottom: 10px !important;
+}
+
+.padingB15 {
+    padding-bottom: 15px !important;
+}
+
+.padingL5 {
+    padding-left: 5px !important;
+}
+
+.padingL10 {
+    padding-left: 10px !important;
+}
+
+.padingL15 {
+    padding-left: 15px !important;
+}
+
+.fs10 {
+    font-size: 10px !important;
+}
+
+.fs11 {
+    font-size: 11px !important;
+}
+
+.fs12 {
+    font-size: 12px !important;
+}
+
+.fs13 {
+    font-size: 13px !important;
+}
+
+.fs14 {
+    font-size: 14px !important;
+}
+
+.fs15 {
+    font-size: 15px !important;
+}
+
+.fs16 {
+    font-size: 16px !important;
+}
+
+.fs18 {
+    font-size: 18px !important;
+}
+
+.fs24 {
+    font-size: 24px !important;
+}
+
+.manage-user .count {
+    font-size: 13px !important;
+}
+
+.label.label-success-dark {
+    background: #0F9200;
+}
+
+.label.label-success-dark.label-stroke {
+    background: none;
+    color: #0F9200;
+    border: 1px solid #0F9200;
+}
+
+div.list_action {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 12px;
+}
+
+div.list_action .overlay {
+    padding: 1px;
+    font-size: 12px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 3px;
+}
+
+div.list_action .danger {
+    color: #bd362f;
+}
+
+.list-group-1 > li a.gosub {
+    padding: 0 !important;
+}
+
+#submission_timeline {
+    font-size: 12px;
+}
+
+#submission_timeline li div ul.list-unstyled {
+    padding-left: 10px !important;
+}
+
+#submission_timeline .timeline-appointments > li .appointments ul li {
+    padding-left: 0;
+}
+
+ul.dropdown-menu {
+    border-color: #c5c5c5;
+}
+
+ul.dropdown-menu li {
+    border-bottom-color: #c5c5c5;
+}
+
+ul.dropdown-menu li a .fa {
+    color: #c5c5c5;
+}
+
+input[type="text"], input[type="password"], select, textarea {
+    color: #737373;
+}
+
+.red {
+    color: #FF0000 !important;
+}
+
+.red-dark {
+    color: #bd362f !important;
+}
+
+.modal-body-scrollable {
+    overflow-y: auto;
+}
+
+.error-visit {
+    padding-top: 10px;
+    font-weight: normal;
+    color: #a94442;
+}
+
+table.acq {
+    border-collapse: separate;
+}
+
+.fleft {
+    float: left;
+}
+
+.norightmargin {
+    margin-right: 0px !important;
+}
+
+table.order-summary thead th {
+    font-size: 12px;
+}
+
+table.order-summary tbody td {
+    font-size: 12px;
+}
+
+table.order-summary .attachment {
+    width: 90px;
+}
+
+/* Begin Select2 border override */
+.select2-dropdown, .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--multiple, .select2-container--default .select2-selection--multiple .select2-selection__choice, .select2-container--classic .select2-selection--single .select2-selection__arrow, .select2-container--classic .select2-search--dropdown .select2-search__field {
+    border: 1px solid #e2e2e2 !important;
+}
+
+.select2-container--classic[dir="rtl"] .select2-selection--single .select2-selection__arrow {
+    border-right: 1px solid #e2e2e2 !important;
+}
+
+/* End Select2 border override */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+}
+
+/* Institute list page column max-width*/
+#institute-users-list-controller .table td, #institute-users-list-controller .table th {
+    max-width: 300px;
+}
+
+/* Change the default font size of whole site to 12 */
+body {
+    font-size: 12px;
+}
+
+/* Change the border of button */
+.btn {
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+/* Change the padding of panel */
+.panel-body, .panel-heading, .panel-footer {
+    padding: 10px;
+}
+
+.page-title {
+    position: relative;
+    padding: 15px 90px 15px 15px
+}
+
+.page-title-button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.w100p {
+    width: 100%;
+}
+
+/* Set transition to all btn elements with ease*/
+.btn {
+    transition: background-color 0.2s ease;
+}
+
+/* Override primary button color */
+.btn-primary {
+    background: #1C90FD;
+    border: 2px solid #1C90FD;
+    color: #ffffff;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary.btn-stroke {
+    background: none;
+    color: #1C90FD;
+}
+
+.btn-group.open .btn-primary.dropdown-toggle,
+.btn-primary.disabled,
+.btn-primary[disabled],
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+    color: #1C90FD;
+    border: 2px solid #1C90FD;
+}
+
+.btn-primary.btn-stroke:hover,
+.btn-primary.btn-stroke:focus,
+.btn-primary.btn-stroke:active,
+.btn-primary.btn-stroke.active {
+    background: #1C90FD;
+    color: #fff;
+}
+
+/* Override info button */
+.btn-info {
+    border: 2px solid #4193d0;
+}
+
+.btn-info.btn-stroke {
+    background: none;
+    color: #4193d0;
+}
+
+.btn-group.open .btn-info.dropdown-toggle,
+.btn-info.disabled,
+.btn-info[disabled],
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active,
+.btn-info.active {
+    border: 2px solid #4193d0;
+    color: #4193d0;
+}
+
+.word-wrap-break {
+    word-wrap: break-word;
+}
+
+.max-width-200 {
+    max-width: 200px !important;
+}
+
+.errors li
+{
+    text-transform:capitalize;
+}
+
+/** Top menu : start **/
+.navbar-brand{
+    position: relative;
+    padding:10px 0 0 15px;
+
+
+}
+body{padding-top:58px;  }
+.navfixed{position:fixed; top:0px; width: 100%;   }
+.navbar .dropdown a.dropdown-toggle{font-weight:600;  }
+.navbar .dropdown a.dropdown-toggle:hover{ background:#087ccd   }
+.navbar ul.nav > li.active > a{background:#087ccd; color:#fff;font-weight: 400;  }
+.navbar ul.nav > li > a{color:#fff; font-size:14px; font-weight: 400;    }
+.navbar ul.nav > li > a:hover{background:#087ccd; color:#fff; }
+.navbar ul.nav > li.open a.dropdown-toggle{background:#087ccd; color:#fff; }
+.navbar .navbar-header .navbar-toggle{margin:0px;  }
+.dropdown-menu li.active > a, .dropdown-menu li.active > a:hover{color:#fff; background:#087ccd   }
+.dropdown-menu li a:hover{background:#087ccd; color:#fff;   }
+
+@media (max-width: 767px){
+.navbar .navbar-collapse{background:#444; padding-left:0px; padding-right:0px;    }
+.navbar .navbar-nav { width:100%; margin:0px;     }
+.nav>li{border-bottom:1px #555 solid  }
+.navbar.main.navbar-primary .dropdown .dropdown-toggle .caret{ float: right; margin-top:8px;  }
+.dropdown-menu li{border-bottom:1px #555 solid }
+.navbar .navbar-nav .dropdown.open .dropdown-menu{background:#333  }
+.navbar .navbar-nav .dropdown.open .dropdown-menu li{border-bottom:1px #555 solid }
+.navbar .navbar-nav .dropdown.open .dropdown-menu li:last-child{border-bottom:0px;  }
+.navbar .navbar-nav .dropdown.open .dropdown-menu li a{color:#fff;   }
+}
+
+/** Top menu : end **/
+.height300
+ {
+   height:300px;
+ }
+
+/* For course review page */
+.institute-detail-item
+{
+    margin: 0 0 2px;
+}
+
+/* For course review detail page */
+.course-category-label{
+    font-size: 85%;
+}
+.course-content-body {
+    max-height: 400px;
+    overflow-y: scroll;
+}
+.max-width-100p
+{
+    max-width: 100%;
+}
+
+/* form-horizontal label style */
+.form-horizontal .control-label, .form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {
+    padding-left:3px;
+}
+/* Remove extra padding in horizontal form */
+.form-horizontal .checkbox{
+    padding-left:0px;
+}

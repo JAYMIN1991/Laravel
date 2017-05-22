@@ -1,0 +1,259 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('account::course-order.common.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('account::course-order.common.title') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    <div class="course_orders_container" id="course_orders_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none'} %}
+            {% block panelBody %}
+                {{ form_open({'method':'get','route':'account.course.orders','id':'frm_course_order','class':'form-horizontal'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="strong"> {{ trans('account::course-order.common.institute_name') }}</label>
+                        {{ form_select('institute_id', {}, input_get('institute_id',''),
+                        {'style':'width:100%','id':'institute_id','class':'form-group',
+                            'data-placeholder': trans('account::course-order.common.institute_name_select') ,
+                            'data-action':route_relative('api.services.suggest.institute'),
+                            'data-old-input' : input_get('institute_id', ''),
+                            'data-institute-name' : instituteName
+                        }
+                        ) }}
+                        <div class="separator top"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="strong">{{ trans('account::course-order.common.select_course') }}</label>
+                        {{ form_select('course-list',{},input_old('course-list',''),
+                        {'class':'select2-el form-control','id':'course-list',
+                            'data-placeholder': trans('account::course-order.common.select_course'),
+                            'data-action'  : route_relative('api.services.suggest.institute-courses'),
+                            'data-old-input': input_get('course-list',''),
+                            'disabled' : 'true'
+                        }) }}
+                        <div class="separator top"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="strong">{{ trans('account::course-order.common.order_status') }}</label>
+                        {{ form_select('order_status', orderStatusOptions, input_get('order_status', ''),
+                        {'class' : 'select2-el',
+                            'style':'width:100%',
+                            'placeholder': trans('account::course-order.common.order_status_select'),
+                        }) }}
+                        <div class="separator top"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="strong">{{ trans('account::course-order.common.is_paid') }}</label>
+                        {{ form_select('is_paid', paidStatusOptions, input_get('is_paid', ''),
+                        {'class' : 'select2-el',
+                            'style':'width:100%',
+                            'placeholder': trans('account::course-order.common.order_status_select'),
+                        }) }}
+                        <div class="separator top"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="strong">{{ trans('account::course-order.common.date_from') }}</label>
+                        <div id="start_date" class="input-group date">
+                            {{ form_text('date_from',input_get('date_from',todayDateDefault),{'class':'form-control','id':'date_from'}) }}
+                            <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="separator top visible-xs"></div>
+                        <label class="strong">{{ trans('account::course-order.common.date_to') }}</label>
+                        <div id="end_date" class="input-group date">
+                            {{ form_text('date_to',input_get('date_to',todayDateDefault),{'class':'form-control','id':'date_to'}) }}
+                            <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="separator top"></div>
+                            <div class="col-md-6">
+                                <label class="strong">{{ trans('account::course-order.common.order_id') }}</label>
+                                {{ form_text('order_id', input_get('order_id'),
+                                {
+                                    'class':'form-control',
+                                    'id':'order_id'
+                                }
+                                ) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 center innerB">
+                        <div class="separator top"></div>
+                        <button name="btnsearch" id="bsearch" value="submit" class="btn btn-primary btn-lg"
+                                type="submit"><i
+                                    class="fa fa-fw fa-search"></i> {{ trans('account::course-order.common.start_searching') }}
+                        </button>
+                    </div>
+
+                    <!-- BEGIN export_button -->
+                    <div class="col-md-6 center">
+                        <div class="separator top"></div>
+                        <button name="btnexport" id="bexport" class="btn btn-info btn-lg" type="submit"
+                                value="export"><i
+                                    class="fa fa-fw fa-download"></i> {{ trans('account::course-order.common.export') }}
+                        </button>
+                    </div>
+                </div>
+                <!-- END export_button -->
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+    </div>
+
+    <div class="separator top"></div>
+    <div class="widget">
+        <div class="widget-body innerAll inner-2x">
+            <!-- Table -->
+            <div class="table-responsive">
+                <table class="visit-table table table-striped table-responsive swipe-horizontal table-primary checkboxs">
+                    <!-- Table heading -->
+                    <thead class="">
+                    <tr>
+                        <th>{{ trans('account::course-order.common.order_id') }}</th>
+                        <th>{{ trans('account::course-order.common.order_date') }}</th>
+                        <th>{{ trans('account::course-order.common.course_name') }}</th>
+                        <th>{{ trans('account::course-order.common.course_price') }}</th>
+                        <th>{{ trans('account::course-order.common.gateway_charge') }}</th>
+                        <th>{{ trans('account::course-order.common.flinnt_charges') }}</th>
+                        <th>{{ trans('account::course-order.common.payable_amount') }}</th>
+                        <th>{{ trans('account::course-order.common.payment_mode') }}</th>
+                        <th>{{ trans('account::course-order.common.buyer_name') }}</th>
+                        <th>{{ trans('account::course-order.common.contact_detail') }}</th>
+                        <th>{{ trans('account::course-order.common.order_status') }}</th>
+                        <th>{{ trans('account::course-order.common.is_paid') }}</th>
+                        <th width="7%">{{ trans('account::course-order.common.action') }}</th>
+                    </tr>
+                    </thead>
+                    <!-- // Table heading END -->
+                    <!-- Table body -->
+                    <tbody>
+
+                    {% if CourseOrderSummary | length > 0 %}
+
+                        {% for  coursedetails in CourseOrderSummary %}
+                            <tr class="selectable">
+                                <td>{{ coursedetails.trans_id }}</td>
+                                <td>{{ coursedetails.trans_dt }}</td>
+                                <td>{{ coursedetails.course_name }}</td>
+                                <td>{{ coursedetails.total_invoice }}</td>
+                                <td>{{ coursedetails.total_charges }}</td>
+                                <td>{{ coursedetails.total_commission }}</td>
+                                <td>{{ coursedetails.total_seller_invoice }}</td>
+                                <td>{{ coursedetails.payment_mode }}</td>
+                                <td>{{ coursedetails.billing_name }} </td>
+                                <td>{{ coursedetails.billing_phone }} {{ coursedetails.billing_email }}</td>
+                                <td>{{ coursedetails.trans_status_label }}</td>
+                                <td>{{ coursedetails.is_paid_seller_label }}</td>
+                                <td>
+                                    {% if coursedetails.trans_status == statusComplete %}
+                                        {% if coursedetails.is_paid_seller != null and coursedetails.is_paid_seller != '1' %}
+                                            <a id="mark_as_paid"
+                                               href="javascript:void(0)"
+                                               class="btn btn-warning btn-xs btn-stroke" data-csrf="{{ csrf_token() }}"
+                                               data-action="{{ route('api.account.mark-as-paid',
+                                               {'trans_id':coursedetails.trans_id}) }}"
+                                               data-tooltip="true" title="paid" data-target="self"><i
+                                                        class="fa  fa-inr"></i> </a>
+                                        {% endif %}
+
+                                        {% if coursedetails.buyer_invoice_filename is empty %}
+                                            {% if coursedetails.generate_buyer_invoice_url != null %}
+                                                <a id="generate_buyer_invoice" href="javascript:void(0)"
+                                                   data-target="self"
+                                                   data-action="{{ coursedetails.generate_buyer_invoice_url }}"
+                                                   class="btn btn-info btn-xs btn-stroke" name=""
+                                                   title="{{ trans('account::course-order.common.generate_buyer_invoice') }}"><i
+                                                            class="fa fa-plus-square"></i></a>
+                                            {% endif %}
+                                        {% else %}
+                                            {% if coursedetails.download_buyer_invoice_url != null %}
+                                                <a href="{{ coursedetails.download_buyer_invoice_url }}"
+                                                   class="btn btn-info btn-xs btn-stroke" data-tooltip="true"
+                                                   title="{{ trans('account::course-order.common.download_buyer_invoice') }}"
+                                                   target="_blank"><i class="fa fa-arrow-circle-down"></i> </a>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if coursedetails.seller_invoice_filename is empty %}
+                                            {% if coursedetails.generate_seller_invoice_url != null %}
+                                                <a href="javascript:void(0)" id="generate_seller_invoice"
+                                                   data-target="self"
+                                                   data-action="{{ coursedetails.generate_seller_invoice_url }}"
+                                                   class="btn btn-danger btn-xs btn-stroke" name=""
+                                                   title="{{ trans('account::course-order.common.generate_seller_invoice') }}"><i
+                                                            class="fa fa-plus-square"></i></a>
+                                            {% endif %}
+                                        {% else %}
+                                            {% if coursedetails.download_seller_invoice_url != null %}
+                                                <a id="btn-delete-{{ coursedetails.sales_visit_id }}"
+                                                   href="{{ coursedetails.download_seller_invoice_url }}"
+                                                   class="btn btn-danger btn-xs btn-stroke delvisit" data-tooltip="true"
+                                                   title="{{ trans('account::course-order.common.download_seller_invoice') }}"
+                                                   target="_blank"><i
+                                                            class="fa fa-arrow-circle-down"></i> </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    {% else %}
+                        <tr>
+                            <td colspan="13" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                        </tr>
+                    {% endif %}
+
+
+                    </tbody>
+                    <!-- // Table body END -->
+
+                </table>
+                <!-- // Table END -->
+            </div>
+
+            {% if CourseOrderSummary | length > 0 %}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="dataTables_info" id="DataTables_Table_4_info">
+                            {{ paginator_status(CourseOrderSummary) | raw }}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dataTables_paginate paging_bootstrap">
+                            {{ CourseOrderSummary.links() | raw }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-course-orders.js') }}"></script>
+{% endblock %}

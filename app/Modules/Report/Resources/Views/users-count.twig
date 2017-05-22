@@ -1,0 +1,83 @@
+{% extends "layouts.backoffice-default" %}
+
+{% block title trans('report::users-count.index.title') %}
+
+{% block pageHead %}
+    {% include "widgets.bootstrap-panel" with {'panelHeader' : 'true', 'title' : ('<h4>' ~ trans('report::users-count.index.title') ~ '</h4>'), 'classes' : 'margin-bottom-none'} %}
+{% endblock %}
+
+{% block pageBody %}
+    <div id="users_count_controller">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'method' : 'GET', 'class' : 'innerAll', 'id' : 'search_institute_list_form', 'role' : 'form'}) }}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="strong">{{ trans('report::users-count.index.date_from') }}</label>
+                            <div id="st_date" class="input-group date">
+                                {{ form_text('date_from',input_get('date_from', todayDate ),{'id':'date_from', 'class':'form-control'}) }}
+                                <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="separator top visible-xs"></div>
+                            <label class="strong">{{ trans('report::users-count.index.date_to') }}</label>
+                            <div id="et_date" class="input-group date">
+                                {{ form_text('date_to',input_get('date_to', todayDate ),{'id':'date_to','class':'form-control'}) }}
+                                <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="innerLR">
+                                <br>
+                                <button name="form_submit" id="bsearch" class="btn btn-primary" type="submit" value="search">{{ trans('shared::button.start_search') | raw}}</button>
+                            </div>
+                        </div>
+                    </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="col-separator-h"></div>
+
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+            'classes' : 'margin-bottom-none padding-none-TB',
+            } %}
+            {% block panelBody %}
+                <table class="table table-bordered table-condensed table-striped table-primary checkboxs margin-bottom-none">
+                    <thead>
+                    <tr>
+                        <th>{{ trans('report::users-count.index.total_users') }}</th>
+                        <th>{{ trans('report::users-count.index.active_users') }}</th>
+                        <th>% {{ trans('report::users-count.index.percentage_active_users') }}</th>
+                        <th>{{ trans('report::users-count.index.mobile_registered') }}</th>
+                        <th>{{ trans('report::users-count.index.new_users') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% if totalUsers is defined and newUsers is defined and mobileUsers is defined
+                                and activeUsers is defined and activeUsersPercentage is defined %}
+                            <tr>
+                                <td>{{ totalUsers }}</td>
+                                <td>{{ activeUsers }}</td>
+                                <td>{{ activeUsersPercentage }}</td>
+                                <td>{{ mobileUsers }}</td>
+                                <td><a href="{{ route_relative('report.users.new', {'date_from' : fromDate, 'date_to': toDate}) }}" target="_blank">{{ newUsers }}</a></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="center">
+                                    <h4>{{ trans('report::users-count.index.data_not_found') }}</h4>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                <div class="clearfix"></div>
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}
+
+{% block footerScriptPlugins %}
+    <script type="text/javascript" src="{{ elixir('js/page/build-users-count.js') }}"></script>
+{% endblock %}

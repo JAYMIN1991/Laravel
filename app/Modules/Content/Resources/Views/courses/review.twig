@@ -1,0 +1,238 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('content::course.review.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' }
+    %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('content::course.review.title') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div class="courses_review_container" id="courses_review_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'content.courses.review', 'id':'form_contents_review', 'method':'get'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('content::course.review.institute_name') }}</label>
+                            {{ form_select('institute', institutes, input_get('institute'), { 'class':'form-control w100p',
+                                'data-placeholder' : '-- ' ~ trans('content::course.review.institute_placeholder') ~ ' --',
+                                'data-action' : route('api.services.suggest.institute', {'for' : 'instituteWithPendingCourseReview' }),
+                                'id': 'institute',
+                                'data-allow-clear' : 'true'
+                            }) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('content::course.review.course_name') }}</label>
+                            {{ form_text('course_name', input_get('course_name'), {'class' : 'form-control'}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>{{ trans('content::course.review.course_type') }}</label>
+                            {{ form_select('course_type', courseTypes, input_get('course_type'), { 'class':'form-control select2-el w100p',
+                                'placeholder' : '-- ' ~ trans('content::course.review.course_type_placeholder') ~ ' --'
+                            }) }}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>{{ trans('content::course.review.course_review_status') }}</label>
+                            {{ form_select('course_review_status', courseReviewStatus, input_get('course_review_status', defaultCourseReviewStatus), { 'class':'form-control select2-el w100p',
+                                'placeholder' : '-- ' ~ trans('content::course.review.course_review_status_placeholder') ~ ' --'
+                            }) }}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>{{ trans('content::course.review.date_from') }}</label>
+                            <div class="input-group date" id="date_from">
+                                {{ form_text('date_from', input_get('date_from'), {'class':'form-control'}) }}
+                                <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>{{ trans('content::course.review.date_to') }}</label>
+                            <div class="input-group date" id="date_to">
+                                {{ form_text('date_to', input_get('date_to'), {'class':'form-control'}) }}
+                                <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 center">
+                        <button type="submit" name="button_submit" id="button_search" value="1"
+                                class="btn btn-primary btn-lg button_submit"> {{ trans('shared::button.start_search') | raw }}</button>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="visit-table table table-bordered table-responsive swipe-horizontal table-primary">
+                        <!-- Table heading -->
+                        <thead>
+                        <tr>
+                            <th>{{ trans('content::course.review.institute') }}</th>
+                            <th>{{ trans('content::course.review.course_name') }}</th>
+                            <th>{{ trans('content::course.review.create_date') }}</th>
+                            <th>{{ trans('content::course.review.type') }}</th>
+                            <th>{{ trans('content::course.review.status') }}</th>
+                            <th>{{ trans('content::course.review.action') }}</th>
+                            <th>{{ trans('content::course.review.history') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+                        <!-- Table body -->
+                        <tbody>
+                        {% if courses | length <= 0 %}
+                            <tr>
+                                <td colspan="7" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% else %}
+                            {% for cs in courses %}
+                                <tr class="selectable">
+                                    <td>
+                                        <strong>{% if cs.user_school_name | length > 0 %}{{ cs.user_school_name }} {% else %} {{ trans("content::course.common.na") }} {% endif %}</strong> <a href="javascript:void(0)" class="fs16 toggle" title="{{ trans('content::course.review.institute_detail') }}"><i class="fa fa-plus-square"></i></a><br >
+                                        <div class="hide">
+                                            {% if cs.user_mobile | length > 0 %} <p class="institute-detail-item"> <i class="fa fa-mobile-phone"></i> {{ cs.user_mobile }} </p> {% endif %}
+                                            {% if cs.user_email | length > 0 %} <p class="institute-detail-item"> <i class="fa fa-envelope"></i> {{ cs.user_email }} </p> {% endif %}
+                                            {% if cs.user_website | length > 0 %} <p class="institute-detail-item"> <i class="fa fa-globe"></i> <a title="{{ trans('content::course.review.website') }}" href="{{ cs.user_website }}" target="_blank"> {{ cs.user_website }}  </a></p>{% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a title ="{{ cs.course_name }}" href="{{ route_relative('content.courses.show', cs.course_id) }}" target="_blank">{{ cs.course_name }}</a>
+                                        {% if cs.course_comments_reviewer|trim %}
+                                            <a title="{{ trans('content::course.review.user_comment') }}" class="marginL15" href="#" data-toggle="modal" data-comment-id="{{ loop.index  }}" data-target="#comment_modal"><i class="fa fa-comment"></i> {{ trans('content::course.review.user_comment') }}</a>
+                                            <div class="hide" id="comment-{{ loop.index  }}">{{ cs.course_comments_reviewer|raw }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ helper_timestempToDate(cs.course_inserted) }}</td>
+                                    <td>{{ cs.course_type }}</td>
+                                    <td>{{ cs.course_review_status }}</td>
+                                    <td><a title="{{ trans('content::course.review.change_status') }}" href="#" data-action="{{ route_relative('api.content.course.status.search', {'id' : cs.course_id}) }}" data-id="{{ cs.course_id }}" data-toggle="modal" data-target="#change_status_modal">{{ trans('content::course.review.change_status') }}</a></td>
+                                    <td><a title="{{ trans('content::course.review.history') }}" href="#" data-action="{{ route_relative('api.content.course.review.search', {'id' : cs.course_id}) }}" data-id="{{ cs.course_id }}" data-toggle="modal" data-target="#review_history_model"><i class="fa fa-calendar"></i> </a></td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="dataTables_info" id="DataTables_Table_4_info">
+                            {{ paginator_status(courses) | raw }}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dataTables_paginate paging_bootstrap">
+                            {{ courses.links() | raw }}
+                        </div>
+                    </div>
+                </div>
+                <!-- Show comment popup-->
+                <div class="modal fade" id="comment_modal" tabindex="-1" role="dialog" aria-labelledby="cmrvmodal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="cmrvmodal">{{ trans('content::course.review.user_comment_title') }}</h4>
+                            </div>
+                            <div class="modal-body modal-body-scrollable height300" >
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('shared::button.close') }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Show change status popup -->
+                <div class="modal fade" id="change_status_modal" tabindex="-1" role="dialog" aria-labelledby="stat_label">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="stat_label">{{ trans('content::course.review.change_course_status') }}</h4>
+                            </div>
+                            <div class="modal-body">
+                                {{ form_hidden('course_id', null, {'id' : 'course_id'} ) }}
+                                {{ form_open({'class': 'margin-none innerLR inner-2x'}) }}
+                                    <div class="form-group">
+                                        <label for="new_status" class="control-label">{{ trans('content::course.review.change_status_to') }}</label>
+                                        {{ form_select('status_list', {}, null, {'id' : 'status_list'}) }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="remarks" class="control-label">{{ trans('content::course.review.remarks') }}</label>
+                                        {{ form_textarea('remarks', null, {'id' : 'remarks', 'class' : 'form-control'} ) }}
+                                    </div>
+                                {{ form_close() }}
+                            </div>
+                            <div class="modal-footer">
+                                {{ form_button( trans('shared::button.close'), {'type':'button', 'class':'btn btn-default', 'data-dismiss':'modal'}) }}
+                                {{ form_button( trans('content::course.review.change_status'), {'type':'button', 'class':'btn btn-success', 'data-dismiss':'modal', 'id' : 'button_change_status'}) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Show history popup -->
+                <div class="modal fade" id="review_history_model" tabindex="-1" role="dialog" aria-labelledby="reviewhistlbl">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="reviewhistlbl">Review History</h4>
+                            </div>
+                            <div class="modal-body modal-body-scrollable height300" >
+                                <table class="dynamicTable tableTools table table-striped checkboxs">
+                                    <!-- Table heading -->
+                                    <thead>
+                                    <tr>
+                                        <th>{{ trans('content::course.review.sr_no') }}</th>
+                                        <th>{{ trans('content::course.review.status') }}</th>
+                                        <th>{{ trans('content::course.review.date_and_time') }}</th>
+                                        <th>{{ trans('content::course.review.remarks') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <!-- // Table heading END -->
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                {{ form_button( trans('shared::button.close'), {'type':'button', 'class':'btn btn-default', 'data-dismiss':'modal'}) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('assets/plugins/forms_editors_ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ elixir('assets/plugins/forms_editors_ckeditor/adapters/jquery.js') }}"></script>
+    <script src="{{ elixir('assets/plugins/other_blockui/jquery.blockUI.js') }}"></script>
+    <script src="{{ elixir('js/flinnt.htmleditor.js') }}"></script>
+    <script src="{{ elixir('js/page/build-courses-review.js') }}"></script>
+{% endblock %}

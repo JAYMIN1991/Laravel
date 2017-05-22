@@ -1,0 +1,79 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('sales::team.update.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('sales::team.update.title') }}
+                <span class="pull-right page-title-button">
+                <a href="{{ route('sales.team.index') }}"><button
+                            class="btn btn-primary btn-success btn-sm">{{ trans('sales::team.button.search_page') | raw }}</button> </a>
+            </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div class="sales_teams_container" id="sales_teams_container">
+        {{ form_open({'route':['sales.team.update', memberDetail.member_id], 'id':'form_sales_team', 'class':'form-horizontal', 'method':'put'}) }}
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <div class="innerLR">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="first_name">{{ trans('sales::team.common.first_name') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('first_name', input_old('first_name', memberDetail.first_name), {'class':'form-control'}) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="last_name">{{ trans('sales::team.common.last_name') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('last_name', input_old('last_name', memberDetail.last_name), {'class':'form-control'}) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="city_name">{{ trans('sales::team.common.city_name') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('city_name', input_old('city_name', memberDetail.city_name), {'class':'form-control'}) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="parent_member_id">{{ trans('sales::team.common.reported_to') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_select('parent_member_id', reportedTo, input_old('parent_member_id', memberDetail.parent_member_id), {'class':'form-control select2-el',
+                                'placeholder' : '-- ' ~ trans('shared::common.dropdown.any') ~ ' --'
+                            }) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    {{ trans('sales::team.common.is_left') }}
+                                    {{ form_checkbox('is_left', 1, input_old('is_left', memberDetail.is_left)) }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" name="submit" class="btn btn-primary" value="Submit"
+                                    id="button_save">{{ trans('shared::button.save') |raw }}</button>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        {{ form_close() }}
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-sales-team.js') }}" type="text/javascript"></script>
+{% endblock %}

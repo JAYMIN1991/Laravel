@@ -1,0 +1,108 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('publisher::cambridge-tkt-exam.common.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('publisher::cambridge-tkt-exam.common.title') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    <div class="cambridge_tkt_exam_container" id="cambridge_tkt_exam_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'publisher.cambridge.tkt.store','id':'cambridgeTKTExamForm','class':'form-horizontal'}) }}
+                <div class="innerLR">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="module_type">{{ trans('publisher::cambridge-tkt-exam.create.select_module_type') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_select('module_type',moduleTypeOptions,input_old('module_type'),{'class':'select2-el form-control','id':'module_type',
+                                'data-placeholder' : trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="existing_module_list" {{ moduleExistingSelected }}>
+                        <label class="col-sm-2 control-label"
+                               for="module_list_id">{{ trans('publisher::cambridge-tkt-exam.common.module_name') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_select('module_list_id',moduleListOptions,input_get('module_list_id',null),{'style':'width:100%;',
+                                'class':'form-control select2-el','id':'module_list_id','data-placeholder' : trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="new_module_list" {{ moduleNewSelected }}>
+                        <label class="col-sm-2 control-label"
+                               for="new_module">{{ trans('publisher::cambridge-tkt-exam.create.new_module') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('new_module',input_get('new_module'),{'style':'width:100%;',
+                                'class':'form-control','id':'new_module'}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="city_type">{{ trans('publisher::cambridge-tkt-exam.create.select_city_type') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_select('city_type',cityTypeOptions,input_old('city_type'),{'class':'select2-el form-control','id':'city_type',
+                                'data-placeholder': trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="existing_city_list">
+                        <label class="col-sm-2 control-label"
+                               for="city_name">{{ trans('publisher::cambridge-tkt-exam.common.city_name') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_select('city_name',cityListOptions,input_get('city_name',null),{'style':'width:100%;','class':'form-control select2-el','id':'city_name',
+                                'data-placeholder': trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="new_city_list">
+                        <label class="col-sm-2 control-label"
+                               for="new_city">{{ trans('publisher::cambridge-tkt-exam.create.new_city') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('new_city',input_get('new_city'),{'style':'width:100%;',
+                                'class':'form-control','id':'new_city'}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="date">{{ trans('publisher::cambridge-tkt-exam.common.date') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('date',input_get('date',null),{'style':'width:100%;', 'class':'form-control','id':'date'}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="url">{{ trans('publisher::cambridge-tkt-exam.common.url') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('url',input_get('url',null),{'style':'width:100%;', 'class':'form-control','id':'url'}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" name="submit" class="btn btn-primary" value="Submit"
+                                    id="submit">{{ trans('shared::button.store') | raw }}</button>
+                        </div>
+                    </div>
+
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}
+
+{% block footerScriptPlugins %}
+    <script src="{{ elixir('js/page/build-cambridge-tkt-exam.js') }}"></script>
+{% endblock %}

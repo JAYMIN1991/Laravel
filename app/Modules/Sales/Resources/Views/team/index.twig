@@ -1,0 +1,128 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('sales::team.index.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('sales::team.index.title') }}
+                <span class="pull-right page-title-button">
+               <a href="{{ route('sales.team.create') }}"><button
+                           class="btn btn-primary btn-success btn-sm"> {{ trans("shared::button.add") | raw }}</button> </a>
+            </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div class="sales_teams_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'sales.team.index','id':'form_sales_team','method':'get' }) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('sales::team.common.first_name') }}</label>
+                            {{ form_text('first_name',input_get('first_name',null),{'class':'form-control'}) }}
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>{{ trans('sales::team.common.city_name') }}</label>
+                                    {{ form_text('city_name',input_get('city_name',null),{'class':'form-control'}) }}
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="separator top visible-xs"></div>
+                                    <label>{{ trans('sales::team.common.is_left') }}</label>
+                                    {{ form_select('is_left', isLeft, input_get('is_left',null),{'class':' select2-el w100p'}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('sales::team.common.last_name') }}</label>
+                            {{ form_text('last_name',input_get('last_name',null),{'class':'form-control'}) }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('sales::team.common.reported_to') }}</label>
+                            {{ form_select('parent_member_id', reportedTo, input_get('parent_member_id',null), {'class':' select2-el w100p',
+                                'placeholder' : '-- ' ~ trans('shared::common.dropdown.any') ~ ' --'
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="innerLR center">
+                            <button type="submit" name="button_search" id="button_search"
+                                    class="btn btn-primary btn-lg button_submit">{{ trans('shared::button.start_search') | raw }}</button>
+                        </div>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="team-table table table-bordered table-responsive swipe-horizontal table-primary checkboxs">
+                        <!-- Table heading -->
+                        <thead>
+                        <tr>
+                            <th>{{ trans('sales::team.common.first_name') }}</th>
+                            <th>{{ trans('sales::team.common.last_name') }}</th>
+                            <th>{{ trans('sales::team.common.city_name') }}</th>
+                            <th>{{ trans('sales::team.common.reported_to') }}</th>
+                            <th>{{ trans('sales::team.common.is_left') }}</th>
+                            <th>{{ trans('sales::team.index.table.action') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+                        <!-- Table body -->
+                        <tbody>
+                        {% if salesMembers | length > 0 %}
+                            {% for  sm in salesMembers %}
+                                <tr class="selectable">
+                                    <td>{{ sm.first_name }} </td>
+                                    <td>{{ sm.last_name }} </td>
+                                    <td>{{ sm.city_name }} </td>
+                                    <td>{{ sm.reported_to }} </td>
+                                    <td>{{ sm.is_left== 0 ? trans('sales::team.common.no') : trans('sales::team.common.yes') }}</td>
+                                    <td>
+                                        <a id="btn-edit-{{ sm.member_id }}"
+                                           href="{{ route("sales.team.edit",sm.member_id) }}"
+                                           class="btn btn-warning btn-xs btn-stroke" data-tooltip="true"
+                                           title="{{ trans('sales::team.index.edit') }}"><i class="fa fa-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="dataTables_info">
+                            {{ paginator_status(salesMembers) | raw }}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dataTables_paginate paging_bootstrap">
+                            {{ salesMembers.links() | raw }}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}

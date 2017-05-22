@@ -1,0 +1,84 @@
+{% extends "layouts.backoffice-default" %}
+
+{% block title trans('users::account-verification.title') %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'panelHeader' : 'true', 'title' : '<h4>' ~ trans('users::account-verification.title') ~ '</h4>', 'classes' : 'margin-bottom-none'} %}
+
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+
+    {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none'} %}
+        {% block panelBody %}
+            <form name="fmreviewcourse" id="frevirecourse" class="form-horizontal innerAll" role="form" method="GET"
+                  action="#">
+                {{ csrf_field() }}
+                <div class="col-md-6">
+                    <label class="strong">{{ trans('users::account-verification.text.login_id') }}</label>
+                    <div>
+                        <input type="text" name="loginId" value="{{ loginId }}" class="form-control"/>
+                        <div class="separator top"></div>
+                    </div>
+                </div>
+                <div class="col-md-3 innerB">
+                    <div class="innerLR">
+                        <div class="separator top"></div>
+                        <input type="hidden" name="isSearch" id="hsearch" value="1"/>
+                        <button name="btnsearch" id="bsearch" class="btn btn-primary btn-lg" type="submit"><i
+                                    class="fa fa-fw fa-search"></i> {{ trans('users::account-verification.button.start_search') }}
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    <div class="col-separator-h"></div>
+    <div class="innerAll bg-white">
+        <table class="table table-bordered table-condensed table-striped table-primary table-vertical-center checkboxs">
+            <thead>
+            <tr>
+                <th>{{ trans('users::account-verification.text.user_name') }}</th>
+                <th>{{ trans('users::account-verification.text.login_id') }}</th>
+                <th>{{ trans('users::account-verification.text.verification_link') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- BEGIN verification_list -->
+            {%  if unverifiedUsers is defined and unverifiedUsers.total > 0 %}
+                {% for user in unverifiedUsers %}
+                    <tr>
+                        <td>{{ user.user_firstname }} {{ user.user_firstname }}</td>
+                        <td>{{ user.user_login }}</td>
+                        <td>{{ user.verification_code_url|raw }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                   <td class="center" colspan="3">
+                       <h4>{{ trans('users::account-verification.text.user_verified') }}</h4>
+                   </td>
+                </tr>
+            {% endif %}
+            <!-- END verification_list -->
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-md-5">
+                <div class="dataTables_info">
+                   {{ paginator_status(unverifiedUsers) | raw }}
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="dataTables_paginate paging_bootstrap">{{ unverifiedUsers.render() |raw }}</div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+
+{% endblock %}

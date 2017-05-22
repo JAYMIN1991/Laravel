@@ -1,0 +1,114 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('sales::visit.acquisition.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' }
+    %}
+    {% block panelHeader %}
+        <h4 class="innerAll margin-none clearfix page-title">
+            {{ trans('sales::visit.acquisition.title') }}
+        </h4>
+    {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div class="acq_container" id="acq_container">
+        {{ form_open({'route': ['sales.visit.acquisition-do',salesVisitId ], 'id':'form_acquisition', 'method':'post' }) }}
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB', 'panelHeader' : true,
+        'title' : trans('sales::visit.common.institute_details')
+        } %}
+            {% block panelBody %}
+                <div class="row row-merge">
+                    <div class="col-md-6">
+                        <table class="acq table margin-none">
+                            <tbody>
+                            <tr>
+                                <td class="text-muted border-top-none">{{ trans('sales::visit.common.institute_name') }}</td>
+                                <td class="border-top-none">{{ salesVisitDetail.institute_name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">{{ trans('sales::visit.common.address') }}</td>
+                                <td>{{ salesVisitDetail.address }} ( {{ salesVisitDetail.city }} , {{ salesVisitDetail.state }} )</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">{{ trans('sales::visit.common.category') }}</td>
+                                <td>{{ salesVisitDetail.category_name }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="acq table margin-none">
+                            <tbody>
+                            <tr>
+                                <td class="text-muted border-top-none">{{ trans('sales::visit.common.contact_person') }}</td>
+                                <td class="border-top-none">{{ salesVisitDetail.contact_person }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">{{ trans('sales::visit.common.designation') }}</td>
+                                <td>{{ salesVisitDetail.contact_person_desig }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">{{ trans('sales::visit.common.contact_number') }} </td>
+                                <td>{{ salesVisitDetail.contact_person_phone }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB',
+        'panelHeader' : true, 'title' : trans('sales::visit.acquisition.institute_label')
+        } %}
+            {% block panelBody %}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_select('user_id',
+                        institutes, salesVisitDetail.converted_inst_id,
+                        {'class' : 'form-control select2-el1' , 'id' : 'instlist',
+                            'data-autosuggesturl' : route_relative('api.services.suggest.institute', { 'for' : 'acquisition' }),
+                            'data-selected-institute-id' : selectedInstituteId,
+                            'data-selected-institute-name': selectedInstituteName,
+                            'data-placeholder' : trans('sales::visit.acquisition.institute_placeholder')
+                        }
+                        ) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="separator top"></div>
+                        <hr/>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="checkbox">
+                            <label class="checkbox-custom">
+                                <i class="fa fa-fw fa-square-o"></i>
+                                <input name="remove_acq" id="remove_acq" value="1" type="checkbox"> {{ trans('sales::visit.acquisition.remove_acquisition') }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB',
+        'panelHeader' : true, 'title' : trans('sales::visit.acquisition.institute_label')
+        } %}
+            {% block panelBody %}
+                {{ form_button('<i class="fa fa-save"></i> Save',{'type':'submit','class':'btn btn-success btn-sm','name':'button_save','id':'button_save'}) }}
+                <a href="{{ route('sales.visit.index')}}" class="btn btn-sm btn-default" id="button_cancel"> {{ trans('shared::button.cancel') }}</a>
+            {% endblock %}
+        {% endembed %}
+        <!-- // Widget END -->
+        {{ form_close() }}
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-visit-acquisition.js') }}"></script>
+{% endblock %}

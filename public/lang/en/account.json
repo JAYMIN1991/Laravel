@@ -1,0 +1,8 @@
+{
+  "custom": {
+    "mark_as_paid": "Are you sure? Mark as paid can be done only once.",
+    "generate_buyer_invoice": "Are you sure? Generate Buyer Invoice.",
+    "generate_seller_invoice": "Are you sure? Generate Seller Invoice.",
+    "success": "Your process update successfully"
+  }
+}

@@ -1,0 +1,175 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('publisher::registrations.index.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('publisher::registrations.index.title') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    <div id="cambridge_registrations_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <!-- Form start here -->
+                {{ form_open({'route':'publisher.cambridge.registrations', 'id':'frm_cambridge_registrations', 'method':'get'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <!-- Registration name input -->
+                            <label>{{ trans('publisher::registrations.index.registrations_name') }}</label>
+                            {{ form_text('registrations_name', input_get('registrations_name', null), {'class':'form-control', 'id':'registrations_name'}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+
+                        <div class="col-md-12 padding-none">
+                            <div class="col-md-12 padding-left-none padding-bottom-none">
+                                <div class="form-group">
+                                    <!-- Registration mobile or user id input -->
+                                    <label>{{ trans('publisher::registrations.index.mobile_no_email_id') }}</label>
+                                    {{ form_text('mobile_no_email_id', input_get('mobile_no_email_id', null), {'class':'form-control', 'id':'mobile_no_email_id'}) }}
+                                </div>
+                                <div class="separator bottom"></div>
+                            </div>
+                            <div class="col-md-12 padding-none">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <!-- Registration start date input -->
+                                        <label>{{ trans('publisher::registrations.index.registration_date_from') }}</label>
+                                        <div class="input-group date" id="registration_date_from">
+                                            {{ form_text('registration_date_from', input_get('registration_date_from', null), {'class':'form-control', 'id':'registration_date_from'}) }}
+                                            <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="separator bottom"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <!-- Registration end date input -->
+                                        <label>{{ trans('publisher::registrations.index.registration_date_to') }}</label>
+                                        <div class="input-group date" id="registration_date_to">
+                                            {{ form_text('registration_date_to', input_get('registration_date_to', null), {'class':'form-control', 'id':'registration_date_to'}) }}
+                                            <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="separator bottom"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <!-- Registration email id input -->
+                            <label>{{ trans('publisher::registrations.index.registration_email_id') }}</label>
+                            {{ form_text('registration_email_id', input_get('registration_email_id', null), {'class':'form-control', 'id':'registration_email_id'}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                        <div class="form-group">
+                            <!-- Registration institute name input -->
+                            <label>{{ trans('publisher::registrations.index.institute_name') }}</label>
+                            {{ form_text('institute_name', input_get('institute_name', null), {'class':'form-control', 'id':'institute_name'}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-offset-4 col-md-2 center">
+                            <div class="form-group">
+                                <!-- Registration form submit button -->
+                                <button type="submit" name="btnsearch"
+                                        class="btn btn-primary btn-lg"
+                                        value="submit"> {{ trans('shared::button.start_search') |raw }}</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2 center">
+                            <div class="form-group">
+                                <button name="btnexport" id="bexport" class="btn btn-info btn-lg" type="submit"
+                                        value="export"> {{ trans('shared::button.export') |raw }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form_close() }}
+                <!-- Form end here -->
+            {% endblock %}
+        {% endembed %}
+        <div class="separator bottom"></div>
+        <div class="panel padding10 panel-default">
+            <div class="widget-body ">
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="visit-table table table-striped table-responsive swipe-horizontal table-primary">
+
+                        <!-- Table heading -->
+                        <thead>
+                        <tr>
+                            <th>{{ trans('publisher::registrations.index.name') }}</th>
+                            <th>{{ trans('publisher::registrations.index.email') }}</th>
+                            <th>{{ trans('publisher::registrations.index.mobile_no_user_id') }}</th>
+                            <th>{{ trans('publisher::registrations.index.institute') }}</th>
+                            <th>{{ trans('publisher::registrations.index.designation_role') }}</th>
+                            <th>{{ trans('publisher::registrations.index.no_year_eng_teach_exp') }}</th>
+                            <th>{{ trans('publisher::registrations.index.registration_date') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+
+                        <!-- Table body -->
+                        <tbody>
+                        {% if cambridgeRegistrationResult | length > 0 %}
+                            {% for  CambridgeReg in cambridgeRegistrationResult %}
+                                <tr class="selectable">
+                                    <td>{{ CambridgeReg.reg_name }}</td>
+                                    <td>{{ CambridgeReg.reg_email }}</td>
+                                    <td>{{ CambridgeReg.reg_mobile }} </td>
+                                    <td> {{ CambridgeReg.reg_institute }}</td>
+                                    <td> {{ CambridgeReg.reg_designation }}</td>
+                                    <td> {{ CambridgeReg.reg_experience }}</td>
+                                    <td> {{ CambridgeReg.reg_date_text }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+
+                <!-- Pagination start -->
+                {% if cambridgeRegistrationResult | length > 0 %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="dataTables_info" id="DataTables_Table_4_info">
+                                {{ paginator_status(cambridgeRegistrationResult) | raw }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dataTables_paginate paging_bootstrap">
+                                {{ cambridgeRegistrationResult.links() | raw }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <!-- Pagination end -->
+            </div>
+        </div>
+        <!-- // Widget END -->
+
+    </div>
+{% endblock %}
+
+
+{% block footerScriptPlugins %}
+    <script src="{{ elixir('js/page/build-cambridge-registrations-list.js') }}"></script>
+{% endblock %}

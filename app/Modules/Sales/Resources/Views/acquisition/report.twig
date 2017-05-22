@@ -1,0 +1,180 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('sales::acquisition.title') }} {% endblock %}
+{% block pageHead %}
+    {% include "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'title': '<h4>' ~ trans('sales::acquisition.title') ~ '</h4>' } %}
+    {#{% endembed %}#}
+{% endblock %}
+{% block pageBody %}
+    <div class="inst_acq_report" id="inst_acq_report">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'sales.report.acquisition', 'id':'form_acquisition', 'method':'get'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::acquisition.ref_by') }}</label>
+                            {{ form_select('ref_by[]', refBy, input_get('ref_by', '0'), { 'class':'form-control select2-el w100p', 'multiple':'multiple', 'id': 'ref_by',
+                                'data-placeholder': '-- ' ~ trans('sales::acquisition.ref_by_placeholder') ~ ' --' }) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('sales::acquisition.institute') }} </label>
+                            {{ form_select('course_user_id', institutes, input_get('course_user_id', ''),
+                            {'class':'form-control select2-el w100p',
+                             'data-placeholder' : '-- ' ~ trans('sales::acquisition.institute_placeholder') ~ ' --',
+                             'data-action' : route('api.services.suggest.institute', {'for' : 'acquisition' }),
+                             'id': 'course-user-id',
+                             'data-allow-clear' : 'true'
+                            }) }}
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>{{ trans('sales::acquisition.date_from') }}</label>
+                                    <div class="input-group date" id="date_from">
+                                        {{ form_text('date_from',input_get('date_from', null ),{'class':'form-control'}) }}
+                                        <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="separator top visible-xs"></div>
+                                    <label>{{ trans('sales::acquisition.date_to') }}</label>
+                                    <div class="input-group date" id="date_to">
+                                        {{ form_text('date_to',input_get('date_to',null),{'class':'form-control'}) }}
+                                        <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ trans('sales::acquisition.post_type') }}</label>
+                                    {{ form_select('post_type',totalPosts,input_get('post_type',null),{'class':'form-control select2-el total_post_value w100p',
+                                        'placeholder': '--' ~ trans('sales::acquisition.total_post_placeholder') ~ ' --'}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label></label>
+                                    {{ form_text('post_value',input_get('post_value',null),{'class':'form-control','id':'post_value'}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="separator bottom"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ trans('sales::acquisition.date_range_on') }}</label>
+                                    {{ form_select('date_range_on',dateRangeOn,input_get('date_range_on',null),{'class':'form-control select2-el w100p'}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4 center">
+                                <button type="submit" name="button_search" id="button_search"
+                                        class="btn btn-primary btn-lg button_submit"> {{ trans('shared::button.start_search') |raw }}</button>
+                            </div>
+                            <div class="col-md-3 center">
+                                <div class="separator top visible-xs"></div>
+                                <button type="submit" name="button_export" id="button_export"
+                                        class="btn btn-info btn-lg button_submit">{{ trans('shared::button.export') | raw }}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="separator"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="acquisition-report-table table table-striped table-responsive swipe-horizontal table-primary checkboxs">
+                        <!-- Table heading -->
+                        <thead>
+                        <tr>
+                            <th>{{ trans('sales::acquisition.ref_by') }}</th>
+                            <th>{{ trans('sales::acquisition.institute') }}</th>
+                            <th>{{ trans('sales::acquisition.total_users') }}</th>
+                            <th>{{ trans('sales::acquisition.mobile_users') }}</th>
+                            <th>{{ trans('sales::acquisition.verified_users') }}</th>
+                            <th>{{ trans('sales::acquisition.post_type') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+                        <!-- Table body -->
+                        {% if acquisitions | length <= 0 %}
+                            <tbody>
+                            <tr>
+                                <td colspan="6" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                            </tbody>
+                        {% else %}
+                            {% set total_users = 0 %}
+                            {% set total_mobile = 0 %}
+                            {% set total_verified = 0 %}
+                            {% set total_posts = 0 %}
+                            {% set total_search_user = 0 %}
+                            <tbody>
+                            {% for  acquisition in acquisitions %}
+                                {% set total_users  = total_users + acquisition.total_users %}
+                                {% set total_mobile = total_mobile + acquisition.total_mobile %}
+                                {% set total_verified = total_verified + acquisition.total_verified %}
+                                {% set total_posts = total_posts + acquisition.total_posts %}
+                                {% set total_search_user = total_search_user +  acquisition.total_search_user %}
+                                <tr class="selectable">
+                                    <td>{{ acquisition.ref_by }}</td>
+                                    <td>{{ acquisition.institute_name }}</td>
+                                    <td>{{ acquisition.total_users }} {{ ' / ' }} {{ acquisition.total_search_user }}</td>
+                                    <td> {{ acquisition.total_mobile }}</td>
+                                    <td>{{ acquisition.total_verified }}</td>
+                                    <td>{{ acquisition.total_posts }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th>{{ trans('sales::acquisition.post_total') }}:</th>
+                                <th></th>
+                                <th>{{ total_users }} / {{ total_search_user }}</th>
+                                <th>{{ total_mobile }}</th>
+                                <th>{{ total_verified }}</th>
+                                <th>{{ total_posts }}</th>
+                            </tr>
+                            </tfoot>
+                        {% endif %}
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="dataTables_info">
+                            {{ paginator_status(acquisitions) | raw }}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dataTables_paginate paging_bootstrap">
+                            {{ acquisitions.links() | raw }}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <!-- // Widget END -->
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ url('assets/plugins/forms_editors_ckeditor/config.js') }}"></script>
+    <script src="{{ elixir('js/page/build-inst-acq-report.js') }}"></script>
+{% endblock %}

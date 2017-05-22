@@ -1,0 +1,146 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('publisher::submissions.index.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('publisher::submissions.index.title') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    {% if cambridgeRegistrationData %}
+        <div class="row">
+        <div class="col-lg-7" id="cambridge_submissions_container">
+            <div class="col-separator col-separator-first box nomargin">
+                <div class="innerAll">
+                    <div class="media">
+                        <div class="media-body innerAll half">
+                            <h4 class="media-heading text-large">{{ cambridgeRegistrationData.reg_name }}</h4>
+                            <p style="line-height: 25px;"><i
+                                        class="fa fa-envelope"></i> {{ cambridgeRegistrationData.reg_email }}
+                                <br><i class="fa fa-mobile"></i> {{ cambridgeRegistrationData.reg_mobile }}
+                                <br><i class="fa fa-building"></i> {{ cambridgeRegistrationData.reg_institute }}
+                                <br><i class="fa fa-group"></i> {{ cambridgeRegistrationData.reg_designation }}
+                                <br><i class="fa fa-signal"></i> {{ cambridgeRegistrationData.reg_experience }}
+                                <br><i class="fa fa-calendar"></i> {{ cambridgeRegistrationData.reg_date }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% if cambridgeSubmissionData | length > 0 %}
+                    {% for CambridgeSub in cambridgeSubmissionData %}
+                        <div class="col-separator-h box"></div>
+                        <div class="row">
+                            <h4 class="innerAll margin-none border-bottom"><a href="#submission_top"><i
+                                            class="fa fa-fw fa-arrow-circle-o-up pull-right text-muted"></i></a><a
+                                        name="submission{{ CambridgeSub.submission_id }}"></a> {{ CambridgeSub.sub_date }}</h4>
+                            <div class="clearfix"></div>
+                            <div class="col-lg-12">
+                                <div class="media innerAll inner-2x border-bottom margin-none" style="overflow: visible">
+                                    <div class="pull-left media-object" style="width: 120px;">
+                                        <p class="text-small"><i class="fa fa-check"></i> <strong>{{ CambridgeSub.sub_exam_category }}</strong></p>
+                                        <p class="text-small"><i class="fa fa-check"></i> <strong>{{ CambridgeSub.sub_activity_type }}</strong></p>
+                                        <p class="text-small"><i class="fa fa-map-marker"></i> <strong>{{ CambridgeSub.sub_place }}</strong></p>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown">
+                                                <i class="fa fa-cloud-download"></i>
+                                                {{ trans('publisher::submissions.index.download') }}
+                                                <span class="caret"></span>
+                                            </button>
+                                            {% if CambridgeSub.total_attachments | length > 0 %}
+                                            <ul class="dropdown-menu">
+
+                                                {% for attachments in CambridgeSub.attachment %}
+                                                <li>
+                                                    <a href="{{ attachments.download_single_submission_url }}"
+                                                       target="_blank"><i class="fa fa-file-pdf-o text-muted-dark"></i>
+                                                        {{ attachments.submission_file_name }}</a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="media-body submission_body">
+                                        <h5 class="text-small text-muted-darker">Description</h5>
+                                        <p class="border-bottom">{{ CambridgeSub.sub_description }}</p>
+                                        <h5 class="text-small text-muted-darker">Time Required</h5>
+                                        <p class="border-bottom">{{ CambridgeSub.sub_time_required }}</p>
+                                        <h5 class="text-small text-muted-darker">Materials Required</h5>
+                                        <p class="border-bottom">
+                                        {% if CambridgeSub.sub_material_required %}
+                                                {{ CambridgeSub.sub_material_required }}
+                                        {% else %}
+                                                {{ NA }}
+                                        {% endif %}
+                                        </p>
+                                        <h5 class="text-small text-muted-darker">Aims</h5>
+                                        <p class="border-bottom">
+                                            {% if CambridgeSub.sub_aims %}
+                                                {{ CambridgeSub.sub_aims }}
+                                            {% else %}
+                                                {{ NA }}
+                                            {% endif %}
+                                        </p>
+                                        <h5 class="text-small text-muted-darker">Procedure</h5>
+                                        <p style="max-height: none;">{{ CambridgeSub.sub_procedure }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-separator-h box"></div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <!-- col-separator.box -->
+            <div class="col-separator col-separator-last box">
+                <div class="heading-buttons border-bottom innerLR">
+                    <h4 class="margin-none innerTB pull-left"><a name="submission_top"></a> {{ trans('publisher::submissions.index.submissions') }} <span class="label label-inverse">{{ submissionDataLength }}</span></h4>
+                    <a class="btn btn-primary btn-sm pull-right" href="{{ route_relative('publisher.cambridge.submissions.download_submission.registration', {'id':cambridgeRegistrationData.enc_reg_id}) }}" target="_blank"><i class="fa fa-cloud-download"></i> {{ trans('publisher::submissions.index.download_all') }}</a>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="widget-body padding-none">
+
+                    <!--<ul class="list-group list-group-1 borders-none margin-none">-->
+                    <ul class="list-unstyled timeline-appointments border-bottom bg-gray" id="submission_timeline">
+                        {% if cambridgeSubmissionData | length > 0 %}
+                        {% for CambridgeSub in cambridgeSubmissionData %}
+                        <li>
+                            <div class="time">{{ CambridgeSub.sub_date_only }}<br /><span class="text-primary">{{ CambridgeSub.sub_time_only }}</span></div>
+                            <i class="fa fa-dot-circle-o text-primary dot"></i>
+                            <div class="appointments">
+                                <ul class="list-unstyled">
+                                    <li>
+                                        <div class="apt">
+                                            <div class="btn-group btn-group-xs pull-right">
+                                                <a href="{{ route('publisher.cambridge.submissions.download_submission.submission',{'submissionId':CambridgeSub.enc_submission_id}) }}" target="_blank" class="btn btn-primary"><i class="fa fa-cloud-download"></i> {{ CambridgeSub.total_attachments }}</a>
+                                            </div>
+                                            <a class="text-primary strong" href="#submission{{ CambridgeSub.submission_id }}">{{ CambridgeSub.sub_exam_category }} <i class="text-faded fa fa-ellipsis-h"></i> {{ CambridgeSub.sub_activity_type }}</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% endfor %}
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block footerScriptPlugins %}
+    <script src="{{ elixir('assets/plugins/readmore/readmore.min.js') }}"></script>
+    <script src="{{ elixir('js/page/build-cambridge-submissions-list.js') }}"></script>
+{% endblock %}

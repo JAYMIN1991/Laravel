@@ -1,0 +1,197 @@
+{% extends "layouts.backoffice-default" %}
+
+{% block title trans('report::content-user-report.index.title') %}
+
+{% block pageHead %}
+    {% include "widgets.bootstrap-panel" with {'panelHeader' : 'true', 'title' : ('<h4>' ~ trans('report::content-user-report.index.title') ~ '</h4>'), 'classes' : 'margin-bottom-none'} %}
+{% endblock %}
+
+{% block pageBody %}
+
+    <div id="content_user_report_controller">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'method' : 'GET', 'class' : 'innerAll', 'id' : 'search_content_user_report_form', 'role' : 'form'}) }}
+                <div class="row innerLR">
+                    <div class="col-md-6">
+                        <div class="checkbox">
+
+                            <label>{{ form_checkbox('show_deleted_course', 1, input_get('show_deleted_course', false), {'id':'show_deleted_course'}) }} {{ trans('report::content-user-report.index.deleted_course') }}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="checkbox">
+                            <label>{{ form_checkbox('greater_than_zero', 1, input_get('greater_than_zero', true), {'id':'greater_than_zero'}) }} {{ trans('report::content-user-report.index.greater_than_zero') }}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label strong"><span class="red-dark">* </span>{{ trans('report::content-user-report.index.source.institute') }}</label>
+                            {{ form_select('source_institute_id', {}, input_get('source_institute_id', ''),
+                            {'class' : 'select2-el',
+                                'id' : 'source_institute_id',
+                                'style':'width:100%',
+                                'data-placeholder': trans('report::content-user-report.index.institute_placeholder'),
+                                'data-action': route_relative('api.services.suggest.institute', {'for' : 'copiedFrom'}),
+                                'data-old-input' : input_get('source_institute_id', ''),
+                                'data-institute-name' : sourceInstituteName
+                            }) }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label strong">{{ trans('report::content-user-report.index.source.course') }}</label>
+                            {{ form_select('source_course_id', {}, input_get('source_course_id', ''),
+                            {'style':'width:100%',
+                                'id': 'source_course_id',
+                                'data-placeholder': trans('report::content-user-report.index.course_placeholder'),
+                                'data-action': route_relative('api.services.suggest.institute-courses', {'for' : 'copiedFrom'}),
+                                'data-old-input' : input_get('source_course_id', ''),
+                            }
+                            ) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label strong">{{ trans('report::content-user-report.index.target.institute') }}</label>
+                            {{ form_select('target_institute_id', {}, input_get('target_institute_id', ''),
+                            {'style':'width:100%',
+                                'id': 'target_institute_id',
+                                'data-placeholder': trans('report::content-user-report.index.institute_placeholder'),
+                                'data-action': route_relative('api.services.suggest.institute', {'for' : 'copiedTo'}),
+                                'data-old-input' : input_get('target_institute_id', ''),
+                                'data-institute-name' : targetInstituteName
+                            }
+                            ) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label strong">{{ trans('report::content-user-report.index.target.course') }}</label>
+                            {{ form_select('target_course_id', {}, input_get('target_course_id', ''),
+                            {'style':'width:100%',
+                                'id': 'target_course_id',
+                                'data-placeholder': trans('report::content-user-report.index.course_placeholder'),
+                                'data-action': route_relative('api.services.suggest.institute-courses', {'for' : 'copiedTo'}),
+                                'data-old-input' : input_get('target_course_id', ''),
+                            }
+                            ) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label strong">{{ trans('report::content-user-report.index.import_status') }}</label>
+                            {{ form_select('course_import_status', importStatusOptions, input_get('course_import_status', ''),
+                            {'style':'width:100%',
+                                'class' : 'select2-el',
+                                'placeholder': trans('report::content-user-report.index.import_status_placeholder'),
+                            }
+                            ) }}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="strong">{{ trans('report::content-user-report.index.date.from') }}</label>
+                        <div id="st_date" class="input-group date">
+                            {{ form_text('date_from',input_get('date_from', '' ),{'id':'date_from', 'class':'form-control'}) }}
+                            <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                        </div>
+                        <div class="separator top"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="strong">{{ trans('report::content-user-report.index.date.to') }}</label>
+                        <div id="et_date" class="input-group date">
+                            {{ form_text('date_to',input_get('date_to', '' ),{'id':'date_to','class':'form-control'}) }}
+                            <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                        </div>
+                        <div class="separator top"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="innerLR">
+                            <div class="separator top"></div>
+                            <button name="form_submit" id="bsearch" class="btn btn-primary" type="submit" value="search">{{ trans('shared::button.start_search') | raw}}</button>
+                        </div>
+                    </div>
+                    <!-- BEGIN export_button -->
+                    {% if canExport is defined and canExport %}
+                        <div class="col-md-3 center">
+                            <div class="innerLR">
+                                <div class="separator top"></div>
+                                <input type="hidden" name="isexport" id="hexport" value="0" />
+                                <button name="form_submit" id="bexport" class="btn btn-info" type="submit" value="export">{{ trans('shared::button.export') | raw}}</button>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <!-- END export_button -->
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+
+        <div class="col-separator-h"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB',
+        } %}
+            {% block panelBody %}
+                <table class="table table-bordered table-condensed table-striped table-primary checkboxs margin-bottom-none">
+                <thead>
+                <tr>
+                    <th>{{ trans('report::content-user-report.index.source.course_name') }}</th>
+                    <th>{{ trans('report::content-user-report.index.content_copy_in') }}</th>
+                    <th>{{ trans('report::content-user-report.index.views') }}</th>
+                    <th>{{ trans('report::content-user-report.index.comments') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- BEGIN inst_list -->
+                {% if userReports is defined %}
+                    {% for report in userReports %}
+                        <tr>
+                            <td>{{ report.source_course }}</td>
+                            <td>{{ report.target_course }} - {{  report.target_inst_name }}</td>
+                            <td>
+                                {{ report.views }}
+                            </td>
+                            <td>{{ report.comments }}</td>
+                        </tr>
+                    {% endfor %}
+                    <!-- END inst_list -->
+                    </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="dataTables_info" id="DataTables_Table_4_info">
+                                {{ paginator_status(userReports) | raw }}
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="dataTables_paginate paging_bootstrap">{{ userReports.render() |raw }}</div>
+                        </div>
+                    </div>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="center">
+                            <h4>{{ trans('report::content-user-report.index.report_not_found') }}</h4>
+                        </td>
+                    </tr>
+                    <!-- END inst_list -->
+                    </tbody>
+                    </table>
+                {% endif %}
+                <div class="clearfix"></div>
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}
+
+{% block footerScriptPlugins %}
+    <script type="text/javascript" src="{{ elixir('js/page/build-content-user-report.js') }}"></script>
+{% endblock %}

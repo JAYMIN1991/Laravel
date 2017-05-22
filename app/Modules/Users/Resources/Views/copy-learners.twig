@@ -1,0 +1,90 @@
+{% extends "layouts.backoffice-default" %}
+
+{% block title trans('users::copy-learners.title') %}
+
+{% block pageHead %}
+    {% include "widgets.bootstrap-panel" with {'panelHeader' : 'true', 'title' : ('<h4>' ~ trans('users::copy-learners.title') ~ '</h4>'), 'classes' : 'margin-bottom-none'} %}
+{% endblock %}
+
+{% block pageBody %}
+    <div id="copy_learners_controller">
+    {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+        {% block panelBody %}
+            {{ form_open({'method' : 'POST', 'class' : 'form-horizontal innerAll', 'id' : 'copy_learners_form', 'role' : 'form'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="strong">{{ trans('users::copy-learners.index.from.institute') }}</label>
+                        <div>
+                            {{ form_select('from_institute', {}, input_get('from_institute', ''),
+                            {'style':'width:100%', 'id': 'from_institute',
+                                'data-placeholder': trans('users::copy-learners.index.from.placeholder_institute'),
+                                'data-action': route_relative('api.services.suggest.institute', {'for' : 'courses'}),
+                                'data-old-input' : input_get('from_institute', ''),
+                                'data-institute-name' : fromInstituteName
+                            }
+                            ) }}
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="strong">{{ trans('users::copy-learners.index.from.courses') }}</label>
+                        <div>
+                            {{ form_select('from_courses[]', {}, input_get('from_courses', ''),
+                            {'style':'width:100%', 'id': 'from_courses',
+                                'data-placeholder': trans('users::copy-learners.index.from.placeholder_courses'),
+                                'data-action': route_relative('api.services.suggest.institute-courses', {'learners_count' : 'true'}),
+                                'data-old-input' : input_get('from_courses', '') | join(','),
+                                'multiple' : 'multiple',
+                                'disabled' : 'true',
+                            }
+                            ) }}
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="col-md-6">
+                        <label class="strong">{{ trans('users::copy-learners.index.to.institute') }}</label>
+                        <div>
+                            {{ form_select('to_institute', {}, input_get('to_institute', ''),
+                            {'style':'width:100%', 'id': 'to_institute',
+                                'data-placeholder': trans('users::copy-learners.index.to.placeholder_institute'),
+                                'data-action': route_relative('api.services.suggest.institute', {'for' : 'courses'}),
+                                'data-old-input' : input_get('to_institute', ''),
+                                'data-institute-name' : toInstituteName
+                            }
+                            ) }}
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="strong">{{ trans('users::copy-learners.index.to.course') }}</label>
+                        <div>
+                            {{ form_select('to_course', {}, input_get('to_course', ''),
+                            {'style':'width:100%', 'id': 'to_course',
+                                'data-placeholder': trans('users::copy-learners.index.to.placeholder_course'),
+                                'data-action': route_relative('api.services.suggest.institute-courses', {'learners_count' : 'true'}),
+                                'data-old-input' : input_get('to_course', ''),
+                                'data-institute-name' : toCourse
+                            }
+                            ) }}
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 innerB">
+                    <div class="innerLR">
+                        <div class="separator top"></div>
+                        <input type="hidden" name="iscopy" id="hiscopy" value="0" />
+                        <button name="btncopy" id="button_copy" class="btn btn-primary btn" type="submit"><i class="fa fa-fw fa-search"></i> Copy Learners</button>
+                    </div>
+                </div>
+            {{ form_close() }}
+        {% endblock %}
+    {% endembed %}
+    </div>
+{% endblock %}
+
+{% block footerScriptPlugins %}
+    <script type="text/javascript" src="{{ elixir('js/page/build-copy-learners.js') }}"></script>
+{% endblock %}

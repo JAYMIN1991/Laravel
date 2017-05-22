@@ -1,0 +1,320 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('course::verify_offline.index.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('course::verify_offline.index.title') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    <div id="verify-offline-payment-container">
+        {{ form_open({'route':'course.verify_offline.index', 'id':'form_verify_offline_payment_list', 'method':'get'}) }}
+
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('course::verify_offline.common.coupon_generated') }}</label>
+                            {{ form_select('coupon_status', (couponStatus is defined ? couponStatus : {}), input_get('coupon_status'),
+                            {
+                                'class' : 'form-control select2-el w100p',
+                                'placeholder' : '-- ' ~ trans('course::verify_offline.common.any') ~ ' --',
+                                'id': 'coupon_status',
+                            }) }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('course::verify_offline.common.cheque_no') }}</label>
+                            {{ form_text('cheque_no',input_get('cheque_no', ''),{'id':'cheque_no', 'class':'form-control'}) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('course::verify_offline.common.check_cleared') }} </label>
+                            {{ form_select('check_cleared',(checkStatus is defined ? checkStatus : {}), input_get('check_cleared'),
+                            {'class' : 'form-control select2-el w100p',
+                                'placeholder' : '-- ' ~ trans('course::verify_offline.common.any') ~ ' --',
+                                'id' : 'check_cleared'
+                            }) }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="strong">{{ trans('course::verify_offline.index.date.from') }}</label>
+                            <div id="st_date" class="input-group date">
+                                {{ form_text('date_from',input_get('date_from', '' ),{'id':'date_from', 'class':'form-control'}) }}
+                                <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            </div>
+                            <div class="separator top"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="strong">{{ trans('course::verify_offline.index.date.to') }}</label>
+                            <div id="et_date" class="input-group date">
+                                {{ form_text('date_to',input_get('date_to', '' ),{'id':'date_to','class':'form-control'}) }}
+                                <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            </div>
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-right">
+                        <div class="separator top"></div>
+                        <button type="submit" name="button_search" id="button_search"
+                                class="btn btn-primary btn-lg button_submit"> {{ trans('shared::button.start_search') | raw }}</button>
+                    </div>
+                    <div class="col-md-6 left">
+                        <div class="separator top"></div>
+                        <button type="submit" name="button_export" id="button_export"
+                                class="btn btn-primary btn-lg button_export"> {{ trans('shared::button.export') | raw }}</button>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="records-table table table-bordered table-responsive swipe-horizontal table-primary checkboxs">
+                        <!-- Table heading -->
+                        <thead>
+                        <tr>
+                            <th>{{ trans('course::verify_offline.index.institute') }}</th>
+                            <th>{{ trans('course::verify_offline.index.course') }}</th>
+                            <th>{{ trans('course::verify_offline.index.coupon_code') }}</th>
+                            <th>{{ trans('course::verify_offline.index.total_buyer') }}</th>
+                            <th>{{ trans('course::verify_offline.index.amount') }}</th>
+                            <th>{{ trans('course::verify_offline.index.cheque_no') }}</th>
+                            <th>{{ trans('course::verify_offline.index.cheque_date') }}</th>
+                            <th>{{ trans('course::verify_offline.index.bank') }}</th>
+                            <th>{{ trans('course::verify_offline.index.branch') }}</th>
+                            <th>{{ trans('course::verify_offline.index.remark') }}</th>
+                            <th>{{ trans('course::verify_offline.common.action') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+                        <!-- Table body -->
+                        <tbody>
+                        {% if verifyOfflinePaymentRecords | length > 0 %}
+                            {% for  records in verifyOfflinePaymentRecords %}
+                                <tr class="selectable">
+                                    <td>{{ records.user_school_name }}</td>
+                                    <td>
+                                        {{ records.course_name }}
+                                    </td>
+                                    <td>
+                                        {% if records.coupon_codes %}
+                                            <a href="#" class="fs16 toggle"><i class="fa fa-plus-square"></i></a><br>
+                                            <div style="display: none;">
+                                                <div>{{ records.coupon_codes |raw }}</div>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ records.total_buyer }}</td>
+                                    <td>{{ records.amount_paid }}</td>
+                                    <td>{{ records.instrument_no }}</td>
+                                    <td>{{ records.instrument_date }}</td>
+                                    <td>{{ records.instrument_issuer_name }}</td>
+                                    <td>{{ records.instrument_issuer_sub }}</td>
+                                    <td>{{ records.remarks }}</td>
+
+                                    <td>
+                                        <!-- Mark check Clear block start-->
+                                        {% if records.mark_check_cleared_block == 1 %}
+                                            {% if records.mark_as_check_cleared_url is defined %}
+                                                <a href="{{ route('course.verify_offline.mark_as_clear', {'id': records.offline_payment_id, 'instrumentProcessStatus': records.is_instrument_processed}) }}"
+                                                   class="btn btn-info btn-xs btn-stroke btn-primary"
+                                                   data-tooltip="true"
+                                                   title="{{ trans('course::verify_offline.common.mark_as_clear') }}"><i
+                                                            class="fa fa-edit"></i> </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        <!-- Mark check Clear block end-->
+
+                                        <!-- Mark return or cancel block start-->
+                                        {% if records.mark_return_or_cancel_block == 1 %}
+                                            <a href="" class="btn btn-xs btn-danger"
+                                               data-id="{{ records.offline_payment_id }}" data-toggle="modal"
+                                               data-target="#mdl_mark_return_cancel"
+                                               data-placement="bottom"
+                                               title="{{ trans('course::verify_offline.common.mark_return_cancel') }}"><i
+                                                        class="fa fa-edit"></i></a>
+                                        {% endif %}
+                                        <!-- Mark return or cancel block end-->
+
+                                        <!-- generate Coupon block start-->
+                                        {% if records.generate_coupon_block == 1 %}
+                                            <a href="{{ route('course.verify_offline.generate_coupon', {'offline_payment_id' : records.offline_payment_id, 'institute_id' : records.user_id,'course_id' : records.course_id,'total_buyer' : records.total_buyer} ) }}"
+                                               class="btn btn-info btn-xs btn-stroke btn-primary" data-tooltip="true"
+                                               title="{{ trans('course::verify_offline.common.generate_coupon') }}"><i
+                                                        class="fa fa-ticket"></i> </a>
+                                        {% endif %}
+                                        <!-- generate Coupon block end-->
+
+                                        <!-- generate offline invoice block start-->
+                                        {% if records.generate_offline_invoices_block == 1 %}
+                                            {% if records.generate_offline_invoices_url is defined %}
+                                                <a href="javascript:void(0)" id="generateInvoices" data-target="self"
+                                                   class="btn btn-info btn-xs btn-stroke btn-primary"
+                                                   data-tooltip="true" data-csrf="{{ csrf_token() }}"
+                                                   data-action="{{ route('api.course.generate_offline_invoice',
+                                                   {'id':records.offline_payment_id,'user_id':records.user_id,'to_do':records.to_do}) }}"
+                                                   title="{{ trans('course::verify_offline.common.generate_offline_invoice') }}"><i
+                                                            class="fa fa-plus-square"></i> </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        <!-- generate offline invoice block end-->
+
+                                        <!-- download buyer invoice block start-->
+                                        {% if records.download_buyer_invoice_block == 1 %}
+                                            {% if records.download_buyer_invoice_url is defined %}
+                                                <a href="{{ records.download_buyer_invoice_url }}"
+                                                   class="btn btn-info btn-xs btn-stroke btn-primary"
+                                                   data-tooltip="true"
+                                                   title="{{ trans('course::verify_offline.common.download_buyer_invoice') }}"><i
+                                                            class="fa fa-arrow-circle-down"></i> </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        <!-- download buyer invoice block end-->
+
+                                        <!-- Generate buyer invoice block start-->
+                                        {% if records.generate_buyer_invoice_block == 1 %}
+                                            {% if records.generate_buyer_invoice_url is defined %}
+                                                <a href="{{ records.generate_buyer_invoice_url }}"
+                                                   class="btn btn-info btn-xs btn-stroke btn-primary"
+                                                   data-tooltip="true"
+                                                   title="{{ trans('course::verify_offline.common.generate_buyer_invoice') }}"><i
+                                                            class="fa fa-arrow-circle-down"></i> </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        <!-- Generate buyer invoice block end-->
+
+                                        <!-- Download seller invoice block start-->
+                                        {% if records.download_seller_invoice_block == 1 %}
+                                            {% if records.download_seller_invoice_url is defined %}
+                                                <a href="{{ records.download_seller_invoice_url }}"
+                                                   class="btn btn-info btn-xs btn-stroke btn-primary"
+                                                   data-tooltip="true"
+                                                   title="{{ trans('course::verify_offline.common.download_seller_invoice') }}"><i
+                                                            class="fa fa-arrow-circle-down"></i> </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        <!-- download seller invoice block end-->
+
+                                        <!-- Generate seller invoice block start-->
+                                        {% if records.generate_seller_invoice_block == 1 %}
+                                            {% if records.generate_seller_invoice_url is defined %}
+                                                <a href="{{ records.generate_seller_invoice_url }}"
+                                                   class="btn btn-info btn-xs btn-stroke btn-primary"
+                                                   data-tooltip="true"
+                                                   title="{{ trans('course::verify_offline.common.generate_seller_invoice') }}"><i
+                                                            class="fa fa-arrow-circle-down"></i> </a>
+                                            {% endif %}
+                                        {% endif %}
+                                        <!-- Generate seller invoice block end-->
+                                    </td>
+                                </tr>
+                                <div class="modal" id="mdl_mark_return_cancel"
+                                     data-action="{{ route('api.course.mark_return_cancel') }}" tabindex="-1"
+                                     role="dialog" aria-labelledby="return_or_cancel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form action="#" class="margin-none innerLR inner-2x"
+                                                  name="mark_return_cancel" id="mark_return_cancel" method="post">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close"><span
+                                                                aria-hidden="true">&times;</span></button>
+                                                    <h4 class="modal-title" id="return_or_cancel">{{ trans('course::verify_offline.index.return_cancel') }}</h4>
+                                                </div>
+                                                <div class="modal-body">
+
+                                                    <div class="form-group">
+                                                        <div>
+                                                            <div class="radio inline">
+                                                                <label class="radio-custom marginR15">
+                                                                    <input type="radio" name="return_cancel"
+                                                                           id="offline_payment_status_return"
+                                                                           value="4"/>
+                                                                    <i class="fa fa-circle-o checked norightmargin"></i>
+                                                                    {{ trans('course::verify_offline.index.return') }}
+                                                                </label>
+
+                                                                <label class="radio-custom marginL15">
+                                                                    <input type="radio" name="return_cancel"
+                                                                           id="offline_payment_status_cancel"
+                                                                           value="3"/>
+                                                                    <i class="fa fa-circle-o checked norightmargin"></i>
+                                                                    {{ trans('course::verify_offline.index.cancel') }}
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div>
+                                                            <label for="reason"><span class="red-dark">*</span>
+                                                                {{ trans('course::verify_offline.index.reason') }}</label>
+                                                            <div>
+                                                                <textarea name="reason" id="reason"
+                                                                          class="form-control"></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <input type="hidden" name="hdpaymentid" id="hdpaymentid"
+                                                           value="{{ records.offline_payment_id }}">
+                                                    <button type="button" id="btnsavepaystatus" class="btn btn-success">
+                                                        {{ trans('course::verify_offline.index.save') }}
+                                                    </button>
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        {{ trans('course::verify_offline.index.cancel') }}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="11" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+                {% if verifyOfflinePaymentRecords | length > 0 %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="dataTables_info">
+                                {{ paginator_status(verifyOfflinePaymentRecords) | raw }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dataTables_paginate paging_bootstrap">
+                                {{ verifyOfflinePaymentRecords.links() | raw }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-verify_offline_payment.js') }}"></script>
+{% endblock %}

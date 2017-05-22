@@ -1,0 +1,178 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('publisher::linguaskill.common.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('publisher::linguaskill.common.title') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    <div class="language_skill_container" id="language_skill_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'publisher.cambridge.linguaskill.search','id':'frm_langua_skill','method':'get'}) }}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>{{ trans('publisher::linguaskill.common.institute_name') }}</label>
+                            {{ form_text('institute_name',input_get('institute_name',null),{'style':'width:100%;', 'class':'form-control','id':'institute_name'}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('publisher::linguaskill.common.institute_type') }}</label>
+                            {{ form_select('institute_type',instituteTypeOptions,input_get('institute_type',null),{'style':'width:100%;','class':'form-control select2-el','id':'institute_type',
+                                'placeholder' : trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                        <div class="form-group">
+                            <label>{{ trans('publisher::linguaskill.common.state') }}</label>
+                            {{ form_select('state',stateOptions,input_get('state',null),{'style':'width:100%;','class':'form-control select2-el','id':'state',
+                                'placeholder' : trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ trans('publisher::linguaskill.common.exam_start_date') }}</label>
+                                {{ form_text('exam_start_date',input_get('exam_start_date',null),{'style':'width:100%;', 'class':'form-control','id':'exam_start_date'}) }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ trans('publisher::linguaskill.common.exam_end_date') }}</label>
+                                {{ form_text('exam_end_date',input_get('exam_end_date',null),{'style':'width:100%;', 'class':'form-control','id':'exam_end_date'}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('publisher::linguaskill.common.city') }}</label>
+                            {{ form_select('city',cityOptions,input_get('city',null),{'style':'width:100%;','class':'form-control select2-el','id':'city',
+                                'placeholder' : trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                        <div class="form-group">
+                            <label>{{ trans('publisher::linguaskill.common.no_of_candidate') }}</label>
+                            {{ form_select('no_of_candidate',candidateRangeOptions,input_get('no_of_candidate',null),{'style':'width:100%;','class':'form-control select2-el','id':'no_of_candidate',
+                                'placeholder' : trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ trans('publisher::linguaskill.common.registration_start_date') }}</label>
+                                {{ form_text('registration_start_date',input_get('registration_start_date',null),{'style':'width:100%;', 'class':'form-control','id':'registration_start_date'}) }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ trans('publisher::linguaskill.common.registration_end_date') }}</label>
+                                {{ form_text('registration_end_date',input_get('registration_end_date',null),{'style':'width:100%;', 'class':'form-control','id':'registration_end_date'}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class=" col-md-offset-4 col-md-2 center">
+                            <div class="form-group">
+                                <button type="submit" name="btnsearch"
+                                        class="btn btn-primary btn-lg"
+                                        value="submit"> {{ trans('shared::button.start_search') |raw }}</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2 center">
+                            <div class="form-group">
+                                <button name="btnexport" id="bexport" class="btn btn-info btn-lg" type="submit"
+                                        value="export"><i class="fa fa-fw fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+
+        <div class="panel padding10 panel-default">
+            <div class="widget-body ">
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="visit-table table table-striped table-responsive swipe-horizontal table-primary">
+
+                        <!-- Table heading -->
+                        <thead class="">
+                        <tr>
+                            <th>{{ trans('publisher::linguaskill.common.institute_name') }}</th>
+                            <th>{{ trans('publisher::linguaskill.common.type') }}</th>
+                            <th>{{ trans('publisher::linguaskill.common.address') }}</th>
+                            <th>{{ trans('publisher::linguaskill.common.contact') }}</th>
+                            <th>{{ trans('publisher::linguaskill.common.designation') }}</th>
+                            <th>{{ trans('publisher::linguaskill.common.no_of_range') }}</th>
+                            <th>{{ trans('publisher::linguaskill.common.exam_date') }}</th>
+                            <th>{{ trans('publisher::linguaskill.common.registration_date') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+
+                        <!-- Table body -->
+                        <tbody>
+                        {% if CambridgeLinguaSkillSearchResult | length > 0 %}
+                            {% for  cs in CambridgeLinguaSkillSearchResult %}
+                                <tr class="selectable">
+                                    <td>{{ cs.inst_name }}</td>
+                                    <td>{{ cs.type_text }}</td>
+                                    <td>{{ cs.contact_address }} {{ cs.contact_city }} {{ cs.state_name }} </td>
+                                    <td> {{ cs.contact_email }} {{ cs.contact_phone }}</td>
+                                    <td> {{ cs.designation }} </td>
+                                    <td> {{ cs.range_text }} </td>
+                                    <td> {{ cs.exam_date }} </td>
+                                    <td> {{ cs.reg_date }} </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+
+                {% if CambridgeLinguaSkillSearchResult %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="dataTables_info" id="DataTables_Table_4_info">
+                                {{ paginator_status(CambridgeLinguaSkillSearchResult) | raw }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dataTables_paginate paging_bootstrap">
+                                {{ CambridgeLinguaSkillSearchResult.links() | raw }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- // Widget END -->
+
+    </div>
+{% endblock %}
+
+
+{% block footerScriptPlugins %}
+    <script src="{{ elixir('js/page/build-lingua-skill-list.js') }}"></script>
+{% endblock %}

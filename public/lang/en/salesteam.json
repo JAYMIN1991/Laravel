@@ -1,0 +1,7 @@
+{
+  "validation" :{
+    "first_name" : "Please enter your first name",
+    "last_name" : "Please enter your last name",
+    "city_name" : "Please enter your city name"
+  }
+}

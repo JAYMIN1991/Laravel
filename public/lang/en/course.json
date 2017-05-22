@@ -1,0 +1,30 @@
+{
+  "please_wait": "Generating preview ... please wait.",
+  "loading": "Loading",
+  "session_expired": "Your session has been expired",
+  "error": {
+    "must_login": "You must login to add this course to wishlist",
+    "no_desc": "No Description found",
+    "unknown_error": "An error occurred while processing your request",
+    "errors": "Errors",
+    "fail_delete": "Failed deleting review",
+    "error_delete": "Error deleting review",
+    "must_choose_ratings": "You must choose your ratings",
+    "fail_submit_review": "Failed submitting review",
+    "add_course_wishlist_fail": "Adding course to wishlist failed! Try after some time.",
+    "error_while_deleting_coupons": "Error while deleting from pay coupon courses!!!",
+    "invalid_offline": "Invalid offline payment!!!",
+    "select_return_cancel": "Please select Return or Cancel!!!",
+    "enter_reason": "Please enter reason!!!"
+  },
+  "confirm": {
+    "want_to_remove": "Are you sure you want to remove your review?"
+  },
+  "success": {
+    "review_removed": "Your review has been removed",
+    "review_submitted": "Your review has been submitted",
+    "course_add_to_wishlist": "Course added to your wishlist successfully",
+    "generate_offline_invoice": "Offline Invoice Generated Successfully ",
+    "submit_success": "Your Mark or return cancel submit successfully"
+  }
+}

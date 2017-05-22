@@ -1,0 +1,16 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('shared::common.dashboard') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('shared::common.dashboard') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div class="dashboard_container">
+    </div>
+{% endblock %}

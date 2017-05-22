@@ -1,0 +1,26 @@
+<div class="panel panel-{%  if panelClass is defined %}{{ panelClass }}{% else %}default{% endif %}{% if classes is defined %} {{ classes }}{% endif %}" {% if id is defined %}id="{{ id }}"{% endif %}{% if attributes is defined %}{% for name,value in attributes %} {{ name }}="{{ value }}"{% endfor %}{% endif %}>
+    {% if panelHeader %}
+        <div class="panel-heading {%  if panelHeaderClasses is defined %}{{ panelHeaderClasses }}{% endif %}">
+        {% if title %}
+            <span class="panel-title">{{ title | raw}}</span>
+        {% else %}
+            {% block panelHeader %}
+
+            {% endblock %}
+        {% endif %}
+        </div>
+    {% endif %}
+
+    {% if panelBody %}
+        <div class="panel-body {%  if panelBodyClasses is defined %}{{ panelBodyClasses }}{% endif %}">
+            {% block panelBody %}
+            {% endblock %}
+        </div>
+    {% endif %}
+    {% if panelFooter %}
+        <div class="panel-footer {%  if panelFooterClasses is defined %}{{ panelFooterClasses }}{% endif %}">
+            {% block panelFooter %}
+            {% endblock %}
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,243 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('course::offline.index.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('course::offline.index.title') }}
+                <span class="pull-right page-title-button">
+                    <a href="{{ route('course.offline.index') }}">
+                        <button class="btn btn-primary btn-success btn-sm"> {{ trans('shared::button.search') |raw }}</button>
+                    </a>
+                </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div id="offline-payment-container">
+        {{ form_open({'route':['course.offline.update', offlinePaymentRecord['offline_payment_id']], 'id':'form_create_offline_payment','method':'PUT', 'class':'form-horizontal'}) }}
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-bottom-none padding-none-TB', 'panelHeader' : true, 'title' : trans('course::offline.create.offline_payment_details') } %}
+            {% block panelBody %}
+                <div class="col-sm-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"
+                                   for="institute_id">{{ trans('course::offline.common.select_institute') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-10">
+
+                                {{ form_select('institute_id', (institute is defined ? institute : {}), input_get('institute-id', offlinePaymentRecord['institute_id']),
+                                {
+                                    'class' : 'form-control w100p',
+                                    'data-placeholder' : '-- ' ~ trans('course::offline.common.institute_placeholder') ~ ' --',
+                                    'data-action' : route('api.services.suggest.institute', {'for' : 'activeInstituteUsersHavingPublicCourse' }),
+                                    'id': 'institute-id',
+                                }) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"
+                                   for="first_name">{{ trans('course::offline.common.course_name') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-10">
+                                {{ form_select('course_id',(courses is defined ? courses : {}), input_get('course_id', offlinePaymentRecord['course_id']), {'class' : 'form-control select2-el w100p',
+                                    'id' : 'course-id'
+                                }) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-md-6">
+                                {{ trans('course::offline.common.total_subscriptions') }} <span
+                                        class="badge">{{ offlinePaymentRecord['subscribed_users'] }}</span>,
+                                {{ trans('course::offline.common.max_subscription_limit') }}
+                                <span
+                                        class="badge">{{ offlinePaymentRecord['max_subscription_limit'] }}</span>,
+                                {{ trans('course::offline.common.course_type') }}:
+                                <span class="badge">{{ offlinePaymentRecord['course_type'] }}</span>,
+
+                                {{ trans('course::offline.common.price') }}: <span
+                                        class="badge">Rs. {{ offlinePaymentRecord['course_price'] }}</span>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"
+                                   for="apply_commission">{{ trans('course::offline.create.total_quantity') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-10">
+                                {{ form_text('total_quantity',input_old('total_quantity',offlinePaymentRecord['total_buyer']),{'class':'form-control','id':'total_quantity'}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"
+                                   for="first_name">{{ trans('course::offline.create.member_list') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-10">
+                                {{ form_select('member_list',(members is defined ? members : {}), input_get('member_list', offlinePaymentRecord['member_id']), {'class' : 'form-control select2-el w100p',
+                                    'placeholder' : '-- ' ~ trans('course::offline.create.select_member') ~ ' --',
+                                    'id' : 'member_list'
+                                }) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-bottom-none padding-none-TB', 'panelHeader' : true, 'title' : trans('course::offline.create.bank_details') } %}
+            {% block panelBody %}
+                <div class="col-sm-12">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="cheque_amount">{{ trans('course::offline.create.cheque_amount') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('cheque_amount',input_old('cheque_amount',offlinePaymentRecord['amount_paid']),{'class':'form-control','id':'cheque_amount'}) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="cheque_no">{{ trans('course::offline.create.cheque_no') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('cheque_no',input_old('cheque_no',offlinePaymentRecord['instrument_no']),{'class':'form-control','id':'cheque_no'}) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="cheque_date">{{ trans('course::offline.create.cheque_date') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('cheque_date',input_old('cheque_date',offlinePaymentRecord['instrument_date']),{'class':'form-control','id':'cheque_date'}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="bank_name">{{ trans('course::offline.create.bank_name') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('bank_name',input_old('bank_name',offlinePaymentRecord['instrument_issuer_name']),{'class':'form-control','id':'bank_name'}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="bank_name">{{ trans('course::offline.create.branch_name') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('branch_name',input_old('branch_name',offlinePaymentRecord['instrument_issuer_sub']),{'class':'form-control','id':'branch_name'}) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-bottom-none padding-none-TB', 'panelHeader' : true, 'title' : trans('course::offline.create.billing_information') } %}
+            {% block panelBody %}
+                <div class="col-sm-12">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="billing_name">{{ trans('course::offline.create.billing_name') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('billing_name',input_old('billing_name',offlinePaymentRecord['billing_name']),{'class':'form-control','id':'billing_name'}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="billing_city">{{ trans('course::offline.create.billing_city') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('billing_city',input_old('billing_city',offlinePaymentRecord['billing_city']),{'class':'form-control','id':'billing_city'}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="billing_pincode">{{ trans('course::offline.create.billing_pincode') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('billing_pincode',input_old('billing_pincode',offlinePaymentRecord['billing_pincode']),{'class':'form-control','id':'billing_pincode'}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="billing_phone">{{ trans('course::offline.create.billing_phone') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('billing_phone',input_old('billing_phone',offlinePaymentRecord['billing_phone']),{'class':'form-control','id':'billing_phone'}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="billing_address">{{ trans('course::offline.create.billing_address') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('billing_address',input_old('billing_address',offlinePaymentRecord['billing_address']),{'class':'form-control','id':'billing_address'}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="billing_state">{{ trans('course::offline.create.billing_state') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('billing_state',input_old('billing_state',offlinePaymentRecord['billing_state']),{'class':'form-control','id':'billing_state'}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label"
+                                   for="billing_email">{{ trans('course::offline.create.billing_email') }} <span
+                                        class="red-dark">*</span></label>
+                            <div class="col-sm-9">
+                                {{ form_text('billing_email',input_old('billing_email',offlinePaymentRecord['billing_email']),{'class':'form-control','id':'billing_email'}) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-bottom-none padding-none-TB', 'panelHeader' : true, 'title' : trans('course::offline.create.additional_information') } %}
+            {% block panelBody %}
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label"
+                               for="remark">{{ trans('course::offline.create.remark') }}</label>
+                        <div class="col-sm-11">
+                            {{ form_textarea('remark',input_old('remark',offlinePaymentRecord['remarks']),{'class':'form-control','id':'remark','rows':'3'}) }}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <div class="form-group">
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <button type="submit" name="submit" class="btn btn-primary" value="Submit"
+                                id="submit">{{ trans('shared::button.store') | raw }}</button>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        {{ form_close() }}
+        <div class="separator top"></div>
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-offline_payment.js') }}"></script>
+{% endblock %}
