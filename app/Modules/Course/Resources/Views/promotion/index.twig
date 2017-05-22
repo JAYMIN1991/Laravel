@@ -1,0 +1,185 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('course::promotion.index.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('course::promotion.index.title') }}
+                <span class="pull-right page-title-button">
+                    <a href="{{ route('course.promotion.create-search') }}">
+                        <button class="btn btn-primary btn-success btn-sm"> {{ trans('shared::button.add') |raw }}</button>
+                    </a>
+                </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div id="promotion-container">
+        {{ form_open({'route':'course.promotion.index', 'id':'form_search_promotion', 'method':'get'}) }}
+
+            {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+                {% block panelBody %}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ trans('course::promotion.common.select_institute') }}</label>
+                                {{ form_select('institute_id', (institute is defined ? institute : {}), input_get('institute-id', null),
+                                {
+                                    'class' : 'form-control w100p',
+                                    'data-placeholder' : '-- ' ~ trans('course::promotion.common.institute_placeholder') ~ ' --',
+                                    'data-action' : route('api.services.suggest.institute', {'for' : 'activeInstituteUsersHavingPublicCourse' }),
+                                    'id': 'institute-id',
+                                }) }}
+                            </div>
+                            <div class="form-group">
+                                <label>{{ trans('course::promotion.common.price') }}</label>
+                                {{ form_select('price_id', (priceTypes is defined ? priceTypes : {}), input_get('price_id', null), {'class' : 'form-control select2-el w100p',
+                                    'placeholder' : '-- ' ~ trans('course::promotion.common.price_placeholder') ~ ' --'
+                                }) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ trans('course::promotion.common.select_course') }} </label>
+                                {{ form_select('course_id',(courses is defined ? courses : {}), input_get('course_id', selectedCourseId), {'class' : 'form-control select2-el w100p',
+                                    'placeholder' : '-- ' ~ trans('course::promotion.common.course_placeholder') ~ ' --',
+                                    'id' : 'course-id'
+                                }) }}
+                            </div>
+                            <div class="form-group">
+                                <label>{{ trans('course::promotion.common.public_type') }}</label>
+                                {{ form_select('public_type', (publicTypes is defined ? publicTypes : {}), input_get('public_type', null), {
+                                    'class' : 'form-control select2-el w100p',
+                                    'placeholder' : '-- ' ~ trans('shared::common.dropdown.any') ~ ' --'
+                                }) }}
+                            </div>
+                        </div>
+                    </div>
+
+                {% endblock %}
+            {% endembed %}
+            <div class="separator top"></div>
+            {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+
+                    {% if promotionLocations | length > 0  %}
+                        <div class="row">
+                        {% for location in promotionLocations %}
+                            <div class="col-md-3 margin5">
+                                <div class="checkbox">
+                                    <label>
+                                        {% if( location.promo_loc_id in input_get('location')) %}
+                                            {% set checkedStatus = true %}
+                                        {% else %}
+                                            {% set checkedStatus = false %}
+                                        {% endif %}
+
+                                        {{ form_checkbox('location[]', location.promo_loc_id, checkedStatus) }}
+                                        {{ location.location_name }}
+                                    </label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 center">
+                                <div class="separator top"></div>
+                                <button type="submit" name="button_search" id="button_search"
+                                        class="btn btn-primary btn-lg button_submit"> {{ trans('shared::button.start_search') | raw }}</button>
+                            </div>
+                        </div>
+                    {% endif %}
+
+            {% endblock %}
+            {% endembed %}
+
+        {{ form_close() }}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="course-table table table-bordered table-responsive swipe-horizontal table-primary checkboxs">
+                        <!-- Table heading -->
+                        <thead>
+                        <tr>
+                            <th>{{ trans('course::promotion.index.course_name') }}</th>
+                            <th>{{ trans('course::promotion.index.course_price') }}</th>
+                            <th>{{ trans('course::promotion.index.type') }}</th>
+                            <th>{{ trans('course::promotion.index.location') }}</th>
+                            <th>{{ trans('course::promotion.index.rank') }}</th>
+                            <th>{{ trans('course::promotion.common.action') }}</th>
+
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+                        <!-- Table body -->
+                        <tbody>
+                        {% if coursesDetails | length > 0 %}
+                            {% for  course in coursesDetails %}
+                                <tr class="selectable">
+                                    <td><a title ="{{ course.course_name }}" href="{{ httpServerCatalog ~ course.user_name ~ '/' ~ course.course_hash ~ '/' ~ course.course_slug }} " target="_blank">{{ course.course_name }}</a></td>
+                                    <td>
+                                        {% if(course.course_is_free == 1) %}
+                                            Free
+                                        {% else %}
+                                            <i class="fa fa-rupee "></i> {{ course.amount }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ course.course_type }}</td>
+                                    <td>{{ course.location_name |raw }}</td>
+                                    <td>{{ course.course_promotion_rank }}</td>
+                                    <td>
+                                        <a href="{{ route('course.promotion.show', course.course_id) }}"
+                                           class="btn btn-info btn-xs btn-stroke btn-primary" data-tooltip="true"
+                                           title="{{ trans('course::promotion.common.mark_as_paid') }}"><i
+                                                    class="fa fa-edit"></i> </a>
+
+                                        <a id="btn-delete-{{ course.course_id }}" href="javascript:void(null)"
+                                           data-action="{{ route("course.promotion.destroy", {'id' : course.course_id}) }}"
+                                           class="btn btn-danger btn-xs btn-stroke delete-promotion" data-tooltip="true"
+                                           title="{{ trans('course::promotion.common.remove_it') }}" data-target="self"
+                                           data-method="delete"
+                                           data-confirm="{{ trans('shared::message.alert.confirm_delete') }}"
+                                           data-csrf="{{ csrf_token() }}"> <i class="fa fa-ban"></i> </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+                {% if coursesDetails | length > 0 %}
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="dataTables_info">
+                            {{ paginator_status(coursesDetails) | raw }}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dataTables_paginate paging_bootstrap">
+                            {{ coursesDetails.links() | raw }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endblock %}
+        {% endembed %}
+
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-promotion.js') }}"></script>
+{% endblock %}
+
+

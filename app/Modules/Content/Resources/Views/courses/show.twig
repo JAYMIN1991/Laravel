@@ -1,0 +1,216 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('content::course.show.title') }} {% endblock %}
+{% block pageHead %}
+{% endblock %}
+{% block stylePlugins %}
+    {{ parent() }}
+    <link href="{{ elixir('assets/plugins/mediaelement/mediaelementplayer.css') }}" rel="stylesheet">
+{% endblock %}
+{% block pageBody %}
+    <div class="row row-app" id="course-contents" data-docpath="{{ docPathURL }}">
+        {{ form_hidden('file_urls',null, {'id':'file_urls', 'data-content':previewURL ~ '|' ~ downloadDocURL ~'|' ~ contentDescriptionURL }) }}
+        <!-- col -->
+        <div class="col-sm-12">
+            <!-- col-separator -->
+            <div class="col-separator">
+                <!-- row-app -->
+                <div class="row row-app">
+                    <!-- col -->
+                    <div class="col-lg-12">
+                        <!-- col-separator.box -->
+                        <div class="col-separator col-separator-first box norightmargin">
+                            <div class="innerAll">
+                                <!-- PATIENT OVERVIEW START -->
+                                <div class="media">
+                                    <img src="{{ courseDetails.user_picture  }}" class="thumb pull-left" alt="" width="100">
+                                    <div class="media-body innerAll half">
+                                        <h4 class="media-heading text-large">{{ courseDetails.user_school_name }}</h4>
+                                        <p>{{ courseDetails.user_firstname }} {{ courseDetails.user_lastname }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-separator-h box"></div>
+                <div class="row row-app">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="col-separator col-separator-first col-unscrollable norightmargin">
+                            <div class="media innerB">
+                                <div class="innerAll">
+                                    <div class="pull-left innerAll text-center">
+                                        <img src="{{ courseDetails.course_picture }}" alt="{{ trans('content::course.show.course_picture->flt_courses') }}" >
+                                    </div>
+                                </div>
+                                <div class="media-body innerLR">
+                                    <div class="innerLR">
+                                        <h2 class="media-heading margin-none">{{ courseDetails.course_name }}</h2>
+                                        <p class="lead">{{ courseDetails.course_subtitle }}</p>
+                                        {% if courseDetails.course_type == 2 %}
+                                            <p class="">{{ courseDetails.course_start_date }}</p>
+                                            <p class="margin-none">{{ courseDetails.course_address }}</p>
+                                        {% endif %}
+                                        <p class="innerT lead">{{ courseDetails.course_status | raw }}</p>
+                                        {% if courseCategories | length > 0 %}
+                                        <p class="">
+                                        {{ trans_choice("content::course.show.categories", courseCategories | length ) }}:
+                                            {% for category in courseCategories %}
+                                            <span class="label label-info course-category-label">{{ category.category_name }}</span>
+                                            {% endfor %}
+                                        </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-separator-h"></div>
+                            <div class="innerAll inner-2x">
+                                {{ courseDetails.course_description | raw }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 col-md-12">
+                        <div class="col-separator col-separator-first col-unscrollable norightmargin">
+                            {% if courseContentDetails | length > 0 %}
+                                {% set lastSection = '' %}
+                                {% for section in courseContentDetails %}
+                                    <div class="col-separator"></div>
+                                    <div class="col-table">
+                                    {% if lastSection != section.section_id %}
+                                        <div class="col-separator-h"></div>
+                                        <div class="row innerAll border-bottom bg-gray margin-none">
+                                            <div class="col-sm-12">
+                                                <h3 class="margin-none">{{ section.section_name }}</h3>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <div class="col-table-row">
+                                        <div class="col-app col-unscrollable">
+                                            <div class="col-app">
+                                                <!-- BEGIN content -->
+                                                <div class="innerAll border-bottom tickets">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <ul class="media-list margin-none">
+                                                                <li class="media">
+                                                                    <div class="pull-left">
+                                                                        <i class="fa {{ section.content_preview_icon }} fa-2x" aria-hidden='true'></i>
+                                                                    </div>
+                                                                    <div class="media-body innerT half">
+                                                                        <span class="media-heading">{{ section.content_title }}</span>
+                                                                        {% if section.attach_preview == 1 %}
+                                                                            <span class="label label-info">{{ trans('content::course.show.preview_available') }}</span>
+                                                                        {% endif %}
+                                                                        <a href="#" class="btn btn-default btn-success {{ section.preview_class }} pull-right"
+                                                                           data-user_id="{{ userId }}"
+                                                                           data-course_id="{{ courseDetails.course_id }}"
+                                                                           data-content_id="{{ section.content_id }}"
+                                                                           data-section_id="{{ section.section_id }}"
+                                                                           data-attachment_id="{{ section.attach_id }}"
+                                                                           title="Click on link to Preview"
+                                                                           data-toggle="modal">
+                                                                            {{ trans('content::course.show.preview') }}
+                                                                        </a>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- END content -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    {% set lastSection = section.section_id %}
+                                 {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="course_content_preview" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="user_course_list" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal heading -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h3 class="modal-title">{{ trans('content::course.show.course_content_preview') }}</h3>
+                    </div>
+
+                    <div class="modal-body course-content-body">
+                        <div id="content_preview_description_popup"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i>{{ trans('shared::button.close') }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/html-template" id="course_content_preview_template">
+            <% _.each(contentlist, function(entry) { %>
+            <div class="col_full nobottommargin">
+                <h2 class="nobottommargin"><strong> <%=entry.content_title%></strong></h2>
+            </div>
+            <div class="line marginB5 marginT5"></div>
+            <div class="col_full nobottommargin" id="course-view">
+                <div class="show-more course_description" data-label="{{ trans('content::course.show.show_full_description') }}">
+                    <div class="show-more-content">
+                        <%=entry.content_description%>
+                    </div>
+
+                </div>
+                <div class="line marginB5"></div>
+            </div>
+            <div class="col_full nobottommargin small-posts">
+                <div class="entry_image postview">
+                    <div id="gallery"  class="hide">
+                        <a href="<%=entry.large_path%>" class="image_fade" data-lightbox="image"><img src="<%=entry.mid_path%>" alt="{{ trans('content::course.show.gallery') }}" /></a>
+                    </div>
+                    <div id="video"  class="hide">
+                        <video id="content_video_player" width="100%" controls="controls" preload="none">
+                            <source src="<%=entry.content_video_file%>" type="video/<%=entry.content_video_type%>" />
+                            <noscript>
+                                <object type="application/x-shockwave-flash" data="{{ url('assets/plugins/mediaelement/build/mediaelement-flash-video.swf') }}">
+                                    <param name="movie" value="{{ url('assets/plugins/mediaelement/build/mediaelement-flash-video.swf') }}"  />
+                                    <param name="flashvars" value="controls=true&file=<%=entry.content_video_file%>" />
+                                    <img src="{{ url('assets/images/mediaelement/no-video-playback.png') }}" title="{{ trans('content::course.show.error.no_video_support') }}" />
+                                </object>
+                            </noscript>
+                            <img src="{{ url('assets/images/mediaelement/no-video-playback.png') }}" title="{{ trans('content::course.show.error.no_video_support') }}" />
+                        </video>
+                    </div>
+                    <div id="audio"  class="hide">
+                        <audio id="content_audio_player" class="max-width-100p" controls="controls" preload="none">
+                            <source src="<%=entry.content_audio_file%>" type="audio/mp3" />
+                            <noscript>
+                                <object width="100%" height="30" type="application/x-shockwave-flash" data="{{ url('assets/plugins/mediaelement/build/mediaelement-flash-audio.swf') }}">
+                                    <param name="movie" value="{{ url('assets/plugins/mediaelement/build/mediaelement-flash-audio.swf') }}" />
+                                    <param name="flashvars" value="controls=true&file=<%=entry.content_audio_file%>" />
+                                    <img src="{{ url('assets/images/mediaelement/no-audio-playback.png') }}" title="{{ trans('content::course.show.error.no_audio_support') }}" />
+                                </object>
+                            </noscript>
+                            <img src="{{ url('assets/images/mediaelement/no-audio-playback.png') }}" title="{{ trans('content::course.show.error.no_audio_support') }}" />
+                        </audio>
+                    </div>
+
+                    <div id="link"  class="hide">
+                        <h4><a href="<%=entry.content_link_url%>" target="_blank" id="content_external_link"><%=entry.content_link_url_text%></a></h4>
+                    </div>
+
+                    <div id="doc" class="hide">
+                        <a href="<%=entry.download_link%>" target="_blank"><img src="<%=entry.content_doc_file_icon%>" alt="Document" /></a>
+                    </div>
+                </div>
+            </div>
+            <%  }) %>
+        </script>
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-fapps.js') }}"></script>
+    <script src="{{ elixir('js/page/build-plugins.js') }}"></script>
+    <script src="{{ elixir('assets/plugins/mediaelement/mediaelement-and-player.js') }}"></script>
+    <script src="{{ elixir('js/page/build-course.js') }}"></script>
+{% endblock %}

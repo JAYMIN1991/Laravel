@@ -1,0 +1,167 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('sales::post-visit.index.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' }
+    %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('sales::post-visit.index.title') }}
+                <span class="pull-right page-title-button">
+                    <a href="{{ route('sales.post-visit.create') }}">
+                        <button class="btn btn-primary btn-success btn-sm"> {{ trans('shared::button.add') |raw }}</button>
+                    </a>
+                </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div class="post_visit_list_container" id="post_visit_list_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'sales.post-visit.index', 'id':'form_post_inst_call_visit', 'method':'get'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('sales::post-visit.common.visit_by') }}</label>
+                            {{ form_select('visit_by', visitBy, input_get('visit_by', null), {'style':'width:100%;', 'class':'form-control select2-el',
+                                'placeholder' : '-- ' ~ trans('sales::visit.common.visit_by_placeholder') ~ ' --'
+                            }) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('sales::post-visit.common.institute') }}</label>
+                            {{ form_select('institute', institutes, input_get('institute',null),
+                            {'class':'form-control',
+                                'style':'width:100%',
+                                'id' : 'inst_user_id',
+                                'data-autosuggesturl': route_relative('api.services.suggest.institute', { 'for' : 'after_sales_visit_list'}),
+                                'data-selected-inst-id' : selectedInstId,
+                                'data-allow-clear' : 'true',
+                                'data-placeholder' : '-- ' ~ trans('sales::post-visit.common.institute_placeholder') ~ ' --'
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>{{ trans('sales::post-visit.common.visit_date_from') }}</label>
+                                    <div class="input-group date" id="date_from">
+                                        {{ form_text('visit_date_from', input_get('visit_date_from', visitDateDefault ), {'class':'form-control'}) }}
+                                        <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="separator top visible-xs"></div>
+                                    <label>{{ trans('sales::post-visit.common.visit_date_to') }}</label>
+                                    <div class="input-group date" id="date_to">
+                                        {{ form_text('visit_date_to', input_get('visit_date_to', visitDateDefault), {'class':'form-control'}) }}
+                                        <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4 center">
+                                <div class="separator top"></div>
+                                <button type="submit" name="button_submit" id="button_search" value="1"
+                                        class="btn btn-primary btn-lg button_submit"> {{ trans('shared::button.start_search') | raw }}</button>
+                            </div>
+                            <div class="col-md-3 center">
+                                <div class="separator top"></div>
+                                <button type="submit" name="button_export" id="button_export" value="2"
+                                        class="btn btn-info btn-lg button_submit"> {{ trans('shared::button.export') | raw }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="visit-table table table-bordered table-responsive swipe-horizontal table-primary checkboxs">
+                        <!-- Table heading -->
+                        <thead class="">
+                        <tr>
+                            <th>{{ trans('sales::post-visit.common.visit_by') }}</th>
+                            <th>{{ trans('sales::post-visit.common.visit_date') }}</th>
+                            <th>{{ trans('sales::post-visit.common.institute_details') }}</th>
+                            <th>{{ trans('sales::post-visit.common.contact_details') }}</th>
+                            <th>{{ trans('sales::post-visit.common.remarks') }}</th>
+                            <th>{{ trans('sales::post-visit.index.action') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+                        <!-- Table body -->
+                        <tbody>
+                        {% if postSalesVisits | length <= 0 %}
+                            <tr>
+                                <td colspan="7" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% else %}
+                            {% for  sv in postSalesVisits %}
+                                <tr class="selectable">
+                                    <td>{{ sv.ref_by }}</td>
+                                    <td>{{ sv.visit_date }}</td>
+                                    <td class="word-wrap-break">{{ sv.institute_name }}
+                                    </td>
+                                    <td class="word-wrap-break">
+                                        {{ trans('sales::post-visit.common.contact_person') }}: {{ sv.contact_person }} <br>
+                                        {{ trans('sales::post-visit.common.designation') }}: {{ sv.contact_person_desig }} <br>
+                                        {{ trans('sales::post-visit.common.phone') }}: {{ sv.contact_person_phone }}<br>
+                                        {{ trans('sales::post-visit.common.email') }}: {{ sv.contact_person_email_id }}
+                                    </td>
+                                    <td class="word-wrap-break">{{ sv.remarks }}</td>
+                                    <td>
+                                        <a id="btn-edit-{{ sv.after_sales_visit_id }}"
+                                           href="{{ route("sales.post-visit.edit",sv.after_sales_visit_id) }}"
+                                           class="btn btn-warning btn-xs btn-stroke" data-tooltip="true" title="{{ trans('sales::post-visit.index.edit_visit') }}"><i
+                                                    class="fa fa-pencil"></i> </a>
+
+                                        <a id="btn-delete-{{ sv.after_sales_visit_id }}" href="javascript:void(null)"
+                                           data-action="{{ route("sales.post-visit.destroy",sv.after_sales_visit_id) }}"
+                                           class="btn btn-danger btn-xs btn-stroke delvisit" data-tooltip="true"
+                                           title="{{ trans('sales::post-visit.index.delete_visit') }}" data-target="self" data-method="delete"
+                                           data-confirm="{{ trans('shared::message.alert.confirm_delete') }}"
+                                           data-csrf="{{ csrf_token() }}"> <i class="fa fa-ban"></i> </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="dataTables_info" id="DataTables_Table_4_info">
+                            {{ paginator_status(postSalesVisits) | raw }}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dataTables_paginate paging_bootstrap">
+                            {{ postSalesVisits.links() | raw }}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-after-sales-visit-list.js') }}"></script>
+{% endblock %}
+

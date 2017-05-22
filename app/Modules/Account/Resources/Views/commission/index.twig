@@ -1,0 +1,168 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('account::user-commission.common.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('account::user-commission.common.title') }}
+                <span class="pull-right page-title-button">
+                <a href="{{ route('account.user-commission.create') }}">
+                    <button class="btn btn-primary btn-sm"> <i
+                                class="fa fa-plus"></i> {{ trans('account::user-commission.common.add') |raw }}</button>
+                </a>
+            </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    <div class="visit_list_container" id="user_commission_list_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'account.user-commission.search','id':'frm_user_commission','method':'get'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('account::user-commission.common.course_type') }}</label>
+                            {{ form_select('course_type',courseTypeOptions,input_get('course_type',null),{'style':'width:100%;','class':'form-control select2-el',
+                                'placeholder': trans('account::user-commission.common.any')
+                            }) }}
+                        </div>
+                        <div class="separator bottom"></div>
+
+                        <div class="col-md-12 padding-none">
+                            <div class="col-md-6 padding-left-none padding-bottom-none">
+                                <div class="form-group">
+                                    <label>{{ trans('account::user-commission.index.commission_range') }}</label>
+                                    {{ form_select('commission_range',commissionRangeOptions,input_get('commission_range',null),{'style':'width:100%','class':'form-control select2-el',
+                                        'placeholder': trans('account::user-commission.common.any')
+                                    }) }}
+                                </div>
+                                <div class="separator bottom"></div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>{{ trans('account::user-commission.index.commission_value') }}</label>
+                                    {{ form_text('commission_value',input_get('commission_value',null),{'style':'width:100%','class':'form-control'}) }}
+                                </div>
+                            </div>
+                            <div class="separator bottom"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('account::user-commission.common.institute_name') }}</label>
+                            {{ form_select('institute_id', {}, input_get('institute_id',''),
+                            {'style':'width:100%','id':'institute_id',
+                                'data-placeholder': trans('account::user-commission.common.institute_name_select') ,
+                                'data-action':route_relative('api.services.suggest.institute'),
+                                'data-old-input' : input_get('institute_id', ''),
+                                'data-institute-name' : instituteName
+                            }
+                            ) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                        <div class="form-group">
+                            <label>{{ trans('account::user-commission.common.select_is_applicable') }}</label>
+                            {{ form_select('select_is_applicable',selectApplicableOptions,input_get('select_is_applicable',null),{'class':'form-control select2-el',
+                                'placeholder': trans('account::user-commission.common.any')}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 center">
+                            <button type="submit" name="btnsearch"
+                                    class="btn btn-primary btn-lg"> {{ trans('shared::button.start_search') |raw }}</button>
+                        </div>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="separator bottom"></div>
+
+        <div class="panel padding10 panel-default">
+            <div class="widget-body ">
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="visit-table table table-striped table-responsive swipe-horizontal table-primary">
+
+                        <!-- Table heading -->
+                        <thead class="">
+                        <tr>
+                            <th>{{ trans('account::user-commission.common.course_type') }}</th>
+                            <th>{{ trans('account::user-commission.common.actual_percentage') }}</th>
+                            <th>{{ trans('account::user-commission.common.applicable_percentage') }}</th>
+                            <th>{{ trans('account::user-commission.common.school_name') }}</th>
+                            <th>{{ trans('account::user-commission.common.not_applicable') }}</th>
+                            <th>{{ trans('account::user-commission.index.action') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+
+                        <!-- Table body -->
+                        <tbody>
+                        {% if commissionList | length > 0 %}
+                            {% for  cl in commissionList %}
+                                <tr class="selectable">
+                                    <td>{{ cl.course_type }}</td>
+                                    <td>{{ cl.actual_perc }}</td>
+                                    <td>{{ cl.applicable_perc }} </td>
+                                    <td> {{ cl.user_school_name }}</td>
+                                    <td>
+                                        {% if cl.is_applicable == 1 %}
+                                            {{ trans('account::user-commission.index.is_applicable_yes') }}
+                                        {% else %}
+                                            {{ trans('account::user-commission.index.is_applicable_no') }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a id="btn-edit-{{ cl.comm_discount_id }}"
+                                           href="{{ route("account.user-commission.edit",cl.comm_discount_id) }}"
+                                           class="btn btn-warning btn-xs btn-stroke" data-tooltip="true"
+                                           title="{{ trans('account::user-commission.index.edit') }}"><i
+                                                    class="fa fa-pencil"></i> </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="dataTables_info" id="DataTables_Table_4_info">
+                            {{ paginator_status(commissionList) | raw }}
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="dataTables_paginate paging_bootstrap">
+                            {{ commissionList.links() | raw }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- // Widget END -->
+
+    </div>
+{% endblock %}
+
+{% block footerScriptPlugins %}
+    <script src="{{ elixir('js/page/build-user-commission-list.js') }}"></script>
+{% endblock %}
+

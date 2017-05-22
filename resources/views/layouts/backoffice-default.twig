@@ -1,0 +1,371 @@
+
+{% extends "sections.backoffice-head" %}
+
+{% block body %}
+<body class="menu-right-hidden">
+
+<div class="container-fluid menu-hidden">
+
+    <!-- LEFT SIDEBAR : START -->
+    {% if leftSidebar is defined %}
+        {{ leftSidebar | raw }}
+    {% else %}
+        {%  block leftSidebar %}
+        <!-- Main Sidebar Menu -->
+
+        <!-- // END Main Sidebar Menu -->
+    {% endblock %}
+    {% endif %}
+    <!-- LEFT SIDEBAR : END -->
+
+    <!-- RIGHT SIDEBAR : START -->
+    {% if rightSidebar is defined %}
+        {{ rightSidebar | raw }}
+    {% else %}
+        {% block rightSidebar %}
+        {% endblock %}
+    {% endif %}
+    <!-- RIGHT SIDEBAR : END -->
+
+
+    <div id="content">
+        <!-- NAVBAR : START -->
+        {% if navbar is defined %}
+            {{ navbar | raw }}
+        {% else %}
+            {% block navbar %}
+
+            <!-- NAVBAR HERE -->
+            <div class="navbar hidden-print navbar-primary box main navfixed" role="navigation">
+              <!-- TOGGLE BUTTON TRIGGER SIDEBAR MENU -->
+              <!--  <div class="user-action user-action-btn-navbar pull-left border-right">
+                    <button class="btn btn-sm btn-navbar btn-primary btn-stroke"><i class="fa fa-bars fa-2x"></i></button>
+                </div> -->
+
+                <div class="navbar-header">
+                    <div class="navbar-brand">
+                        <a class="" href="#"><img src="{{ url('/assets/images/logo.png') }}"></a>
+                    </div>
+
+                    <div class="collapsed navbar-toggle">
+                        <button type="button" class="btn btn-sm btn-navbar btn-primary btn-stroke collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span><i class="fa fa-bars fa-2x"></i>
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class=" navbar-collapse collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">{{ trans("shared::common.sidebar_menu.accounts.title") }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('account.institute.bank') }}" class=""><span>{{ trans("shared::common.sidebar_menu.accounts.items.institute_bank_details") }} </span></a></li>
+                                <li><a href="{{ route_relative('account.user-commission.search') }}" class=""><span>{{ trans("shared::common.sidebar_menu.accounts.items.user_commission_list") }} </span></a></li>
+                                <li><a href="{{ route_relative('account.course.orders') }}" class=""><span>{{ trans("shared::common.sidebar_menu.accounts.items.course_order_summery") }}</span></a></li>
+                            </ul>
+                        </li>
+                        <!-- COLLAPSIBLE -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">{{ trans("shared::common.sidebar_menu.sales.title") }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('sales.report.acquisition') }}" class=""><span>{{ trans('shared::common.sidebar_menu.sales.items.inst_acq_report') }}</span></a></li>
+                                <li><a href="{{ route_relative('sales.visit.index') }}" class=""><span>{{ trans('shared::common.sidebar_menu.sales.items.inst_call_visit_list') }}</span></a></li>
+                                <li><a href="{{ route_relative('sales.team.index') }}" class=""><span>{{ trans('shared::common.sidebar_menu.sales.items.sales_team') }}</span></a></li>
+                                <li><a href="{{ route_relative('sales.post-visit.index') }}" class="#"><span>{{ trans('shared::common.sidebar_menu.sales.items.after_sales_visit') }}</span></a></li>
+                            </ul>
+                        </li>
+
+                        <!-- COLLAPSIBLE -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">{{ trans("shared::common.sidebar_menu.public_user_management.title") }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('users.verification-pending.unverifiedAccountsList') }}" class=""><span>{{ trans("shared::common.sidebar_menu.public_user_management.items.account_verification") }} </span></a></li>
+                                <li><a href="{{ route_relative('users.user-search.index') }}" class=""><span>{{ trans("shared::common.sidebar_menu.public_user_management.items.user_search") }}</span></a></li>
+                                <li><a href="{{ route_relative('users.course-invitation.inviteUsers') }}" class="#"><span>{{ trans("shared::common.sidebar_menu.public_user_management.items.send_invitation") }} </span></a></li>
+                                <li><a href="{{ route_relative('users.copy-learners.index') }}" class="#"><span>{{ trans("shared::common.sidebar_menu.public_user_management.items.copy_learners") }} </span></a></li>
+                                <li><a href="{{ route_relative('users.institute-users.index') }}" class="#"><span>{{ trans("shared::common.sidebar_menu.public_user_management.items.institute_users_list") }} </span></a></li>
+                            </ul>
+                        </li>
+                        <!-- COLLAPSIBLE -->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">{{ trans("shared::common.sidebar_menu.reports.title") }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('report.content.users') }}" class=""><span>{{ trans("shared::common.sidebar_menu.reports.items.content_user_report") }} </span></a></li>
+                                <li><a href="{{ route_relative('report.institutions') }}" class=""><span>{{ trans("shared::common.sidebar_menu.reports.items.institute_list") }}</span></a></li>
+                                <li><a href="{{ route_relative('report.users.statistics.registration') }}" class="#"><span>{{ trans("shared::common.sidebar_menu.reports.items.course_count") }}</span></a></li>
+                            </ul>
+
+                        </li>
+                        <!-- COLLAPSIBLE-->
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">{{ trans("shared::common.sidebar_menu.publisher.title") }}  <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('publisher.cambridge.tkt.search') }}"><span>{{ trans('publisher::cambridge-tkt-exam.common.title') }}</span></a></li>
+                                <li><a href="{{ route_relative('publisher.cambridge.registrations') }}"><span>{{ trans('publisher::registrations.index.cambridge_registration') }}</span></a></li>
+                                <li><a href="{{ route_relative('publisher.cambridge.submissions') }}" class=""><span>{{ trans('publisher::submissions.index.cambridge_submissions') }}</span></a></li>
+                                <li><a href="{{ route_relative('publisher.cambridge.linguaskill.search') }}"><span>{{ trans('publisher::linguaskill.common.title') }}</span></a></li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown">
+                            <a data-toggle="dropdown" class="dropdown-toggle">{{ trans("shared::common.sidebar_menu.content.title") }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('content.courses.review') }}"><span>{{ trans('shared::common.sidebar_menu.content.items.courses_review') }}</span></a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">{{ trans("shared::common.sidebar_menu.course.title") }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('course.promotion.create-search') }}"><span>{{ trans('shared::common.sidebar_menu.course.items.course_promotion') }}</span></a></li>
+                                <li><a href="{{ route_relative('course.offline.index') }}"><span>{{ trans('shared::common.sidebar_menu.course.items.offline_payment') }}</span></a></li>
+                                <li><a href="{{ route_relative('course.verify_offline.index') }}"><span>{{ trans('shared::common.sidebar_menu.course.items.verify_offline_payment') }}</span></a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">{{ trans("shared::common.sidebar_menu.utility.title") }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('utility.changePassword.index') }}" class=""><span>{{ trans("shared::common.sidebar_menu.utility.items.change_password") }}</span></a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown navbar-right">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="media margin-none">
+                                    <span class="pull-left"><img src="{{ asset('assets/images/people/35/avatar.png') }}" alt="user" class="img-circle"></span>
+                                    <span class="media-body">{{ session_get('user_firstname') }}<span class="caret"></span>
+                                </span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route_relative('logout') }}">{{ trans("shared::common.sidebar_menu.user.items.logout") }}</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- /.navbar-collapse -->
+
+
+
+                <div class="clearfix"></div>
+            </div>
+            <!-- // END navbar -->
+
+            {% endblock %}
+        {% endif %}
+        <!-- NAVBAR : END -->
+
+        <!-- TOP MENU : START -->
+        {% if topMenu is defined %}
+            {{ topMenu | raw }}
+        {% else %}
+            {% block topMenu %}
+            {% endblock %}
+        {% endif %}
+        <!-- TOP MENU : END -->
+
+
+        <div class="layout-app">
+
+            <div class="row row-app">
+                <div class="col-md-12">
+
+                    <!--  CONTENT -->
+                    <div class="col-separator bg-none col-unscrollable box col-separator-first">
+                        <div class="col-table">
+
+                            <!-- PAGE HEAD : START -->
+                            {% if pageHead is defined %}
+                                {{ pageHead | raw }}
+                            {% else %}
+                                {% block pageHead %}
+                                    <h4 class="innerAll margin-none border-bottom">Page Head</h4>
+                                {% endblock %}
+                            {% endif %}
+                            <!-- PAGE HEAD : END -->
+
+                            <div class="col-separator-h"></div>
+
+                            <!-- MESSAGE BLOCK : START -->
+                            {% if session_has('message') %}
+                                {% if session_get('message') is not iterable %}
+                                    {% set sessionMessage = [session_get('message')] %}
+                                {% endif %}
+                            {% else %}
+                                {% set sessionMessage = [] %}
+                            {% endif %}
+                            {% if (message is defined and message)  %}
+                                {% if message is not iterable %}
+                                    {% set message = [message] %}
+                                    {% set message = message|merge(sessionMessage) %}
+                                {% endif %}
+                                <div class="row messageBag">
+                                    <div class="alert alert-success">
+                                        <a href="#" data-dismiss="alert" class="close">&times;</a>
+                                            <ul>
+                                                {% for msg in  message  %}
+                                                    <li>{{ msg|raw }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                    </div>
+                                </div>
+                            {% else %}
+                                {% block message %}
+                                    {% if session_has('message') %}
+                                        <div class="row messageBag">
+                                            <div class="alert alert-success">
+                                                <a href="#" data-dismiss="alert" class="close">&times;</a>
+                                                {%  if session_get('message') is iterable %}
+                                                    <ul>
+                                                        {% for message in  session_get('message')  %}
+                                                            <li>{{ message|raw }}</li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% else %}
+                                                    {{ session_get('message') }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endblock %}
+                            {% endif %}
+                            <!-- MESSAGE BLOCK : END -->
+
+                            <!-- ERROR BLOCK : START  -->
+                            {% if errorsBlock is defined %}
+                                {{ errorsBlock | raw }}
+                            {% else %}
+                                {% block errorsBlock %}
+                                    {% if errors and errors.any() %}
+                                        <div class="row messageBag errors">
+                                            <div class="alert alert-danger">
+                                                <a href="#" data-dismiss="alert" class="close">&times;</a>
+                                                <ul>
+                                                    {% for error in  errors.all()  %}
+                                                        <li>{{ error|raw }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    {%  endif %}
+                                {% endblock %}
+                            {% endif %}
+                            <!-- ERROR BLOCK : END -->
+
+                            <div class="col-table-row">
+                                <div class="col-app col-scrollable">
+                                    <div class="col-app col-scrollable">
+
+                                        <!-- PAGE BODY : START -->
+                                        {% if pageBody is defined %}
+                                            {{ pageBody | raw }}
+                                        {% else %}
+                                            {% block pageBody %}
+                                                this is block from body
+                                            {% endblock %}
+                                        {% endif %}
+                                        <!-- PAGE BODY : END -->
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER : START -->
+    {% if footer is defined %}
+        {{ footer | raw }}
+    {% else %}
+        {% block footer %}
+            <div id="footer" class="hidden-print">
+                <div class="copy"> <!-- Copyright HERE--></div>
+            </div>
+        {% endblock %}
+    {% endif %}
+    <!-- FOOTER : END -->
+
+
+</div>
+
+
+
+<!-- FOOTER SCRIPT : START -->
+<script data-id="App.Config">
+        var App = {};
+        var basePath = '',
+            commonPath = '../assets/',
+            rootPath = '../',
+            DEV = false,
+            componentsPath = '../assets/components/';
+        var primaryColor = '#eb6a5a',
+            dangerColor = '#b55151',
+            successColor = '#609450',
+            infoColor = '#4a8bc2',
+            warningColor = '#ab7a4b',
+            inverseColor = '#45484d';
+        var themerPrimaryColor = primaryColor;
+    </script>
+
+<!-- FOOTER SCRIPT PLUGINS -->
+
+    <!-- Keep this for testing -->
+    <script src="{{ elixir('js/build-vendor-top.js') }}"></script>
+    {#<script src="{{ asset('assets/library/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/library/jquery/jquery-migrate.min.js') }}"></script>
+    <script src="{{ asset('assets/library/modernizr/modernizr.js') }}"></script>
+    <script src="{{ asset('assets/plugins/core_less-js/less.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/core_browser/ie/ie.prototype.polyfill.js') }}"></script>
+    <script src="{{ asset('assets/library/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/core_nicescroll/jquery.nicescroll.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/core_breakpoints/breakpoints.js') }}"></script>
+    <script src="{{ asset('assets/plugins/core_preload/pace.min.js') }}"></script>
+    <script src="{{ asset('assets/components/core_preload/preload.pace.init.js') }}"></script>
+    <script src="{{ asset('assets/components/admin_menus/sidebar.main.init.js') }}"></script>
+    <script src="{{ asset('assets/components/admin_menus/sidebar.collapse.init.js') }}"></script>
+    <script src="{{ asset('assets/library/jquery-ui/js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/forms_validator/jquery-validation/dist/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/forms_elements_select2_latest/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('js/laroute.js') }}"></script>
+    <script src="{{ asset('assets/plugins/underscore/underscore.js') }}"></script>
+    <script src="{{ asset('assets/plugins/js-cookie-latest/js/js.cookie.js') }}"></script>
+    <script src="{{ asset('js/admin/setup.init.js') }}"></script>#}
+
+{% if footerScriptPlugins is defined %}
+    {{ footerScriptPlugins | raw }}
+{% else %}
+    {% block footerScriptPlugins %}
+        {#<script src="{{ asset('assets/plugins/forms_elements_bootstrap-select/js/bootstrap-select.js') }}"></script>#}
+        {#<script src="{{ asset('assets/components/forms_elements_bootstrap-select/bootstrap-select.init.js') }}"></script>#}
+
+    {% endblock %}
+{% endif %}
+<!-- FOOTER SCRIPT PLUGIN : END -->
+    {#Keep this#}
+    {#<script src="{{ asset('assets/plugins/i18next/i18next.js') }}"></script>
+    <script src="{{ asset('assets/plugins/i18next/plugins/i18nextXHRBackend.js') }}"></script>
+    <script src="{{ asset('assets/components/forms_validator/form-validator.init.js') }}"></script>
+    <script src="{{ asset('assets/components/core/core.init.js') }}"></script>
+    <script src="{{ asset('js/admin/common.js') }}"></script>#}
+    <script src="{{ elixir('js/build-vendor-bottom.js') }}"></script>
+
+<!-- FOOTER SCRIPT PAGE LEVEL : START -->
+{% if footerScriptPage is defined %}
+    {{ footerScriptPage | raw }}
+{% else %}
+    {% block footerScriptPage %}
+    {% endblock %}
+{% endif %}
+<!-- FOOTER SCRIPT PAGE LEVEL : END -->
+
+<!-- FOOTER SCRIPT : END -->
+
+</body>
+{% endblock %}

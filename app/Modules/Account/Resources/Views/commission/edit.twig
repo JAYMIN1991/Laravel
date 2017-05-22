@@ -1,0 +1,105 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('account::user-commission.common.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('account::user-commission.common.title') }}
+                <span class="pull-right page-title-button">
+                <a href="{{ route('account.user-commission.search') }}">
+                    <button class="btn btn-success btn-sm"> <i
+                                class="fa fa-search"></i> {{ trans('account::user-commission.common.search_page') |raw }}</button>
+                </a>
+            </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+
+    <div class="user_commission_container" id="user_commission_container">
+
+        {{ form_open({'route':['account.user-commission.update',details.comm_discount_id],'id':'frm_user_commission_mst','class':'form-horizontal','method':'put'}) }}
+        <div class="panel padding10 panel-default">
+            <div class="widget-body">
+                <div class="innerLR">
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="first_name">{{ trans('account::user-commission.common.course_type') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_select('course_type',courseTypeCollection,input_old('course_type',courseTypeId),{'class':'select2-el form-control','id':'course_type'}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="last_name">{{ trans('account::user-commission.common.institute_name') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_select('institute_id', instituteName, input_get('institute_id',''),
+                            {'style':'width:100%','id':'institute_id',
+                                'data-placeholder': trans('account::user-commission.common.institute_name_select') ,
+                                'data-action':route_relative('api.services.suggest.institute'),
+                                'data-old-input' : input_get('institute_id', ''),
+                                'data-institute-name' : instituteName
+                            }
+                            ) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="city_name">{{ trans('account::user-commission.common.actual_commission') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('actual_commission',input_old('actual_commission',details.actual_perc),{'class':'form-control','id':'actual_commission','disabled':'disabled'}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="parent_member_id">{{ trans('account::user-commission.common.apply_commission') }}</label>
+                        <div class="col-sm-10">
+                            {{ form_text('apply_commission',input_old('apply_commission',details.applicable_perc),{'class':'form-control','id':'apply_commission'}) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label class="">
+                                    {{ trans('account::user-commission.common.not_applicable') }}
+                                    {% if details.is_applicable == 1 %}
+                                        {{ form_checkbox('not_applicable',1,input_old('not_applicable',true)) }}
+                                    {% else %}
+                                        {{ form_checkbox('not_applicable',1,input_old('not_applicable',false)) }}
+                                    {% endif %}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <input type="hidden" name="actual_cmm_hdn" id="actual_cmm_hdn"
+                                   value="{{ details.actual_perc }}">
+                            <button type="submit" name="submit" class="btn btn-primary" value="Submit"
+                                    id="submit">{{ trans('shared::button.store') | raw }}</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {{ form_close() }}
+
+    </div>
+{% endblock %}
+
+
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-user-commission.js') }}" type="text/javascript"></script>
+{% endblock %}

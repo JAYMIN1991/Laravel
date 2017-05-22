@@ -1,0 +1,161 @@
+{% extends "layouts.backoffice-default" %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' }
+    %}
+    {% block panelHeader %}
+        <h4 class="innerAll margin-none clearfix page-title">
+            {{ trans('sales::visit.create.title') }}
+            <span class="pull-right page-title-button">
+               <a href="{{ route('sales.visit.index') }}"><button class="btn btn-primary btn-success btn-sm">{{ trans('shared::button.search') | raw }}</button> </a>
+            </span>
+        </h4>
+    {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div class="inst_visit_container" id="inst_visit_container">
+        {{ form_open({'route':'sales.visit.store', 'id':'form_institute_call_visit'}) }}
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB',
+        'panelHeader' : true, 'title' : trans('sales::visit.common.visit_details') } %}
+            {% block panelBody %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                        <label><i class="text-danger">*</i>  {{ trans('sales::visit.common.visit_date') }}</label>
+                        <div class="input-group date" id="visit_date_container">
+                            {{ form_text('visit_date',null,{'class':'form-control','id':'visit_date'}) }}
+                            <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                        </div>
+                        </div>
+                        <div class="separator bottom"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::visit.common.institute_type') }}</label>
+                            {{ form_select('institute_type',instituteTypes,input_old('institute_type'),{'class':'form-control select2-el w100p','id':'institute_type' }) }}
+                        </div>
+                        <div class="separator bottom"></div>
+
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB',
+        'panelHeader' : true, 'title' : trans('sales::visit.common.institute_details') } %}
+            {% block panelBody %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                        <label><i class="text-danger">*</i> {{ trans('sales::visit.common.institute_name') }}</label>
+                            {% if( input_old('institute_type', 1) == 1 ) %}
+                                {% set instNameDisplay = 'block' %}
+                                {% set instDropdownDisplay = 'none' %}
+                            {% else %}
+                                {%  set instNameDisplay = 'none' %}
+                                {% set instDropdownDisplay = 'block' %}
+                            {% endif %}
+
+                            <div id="institute_name_container" style="display:{{ instNameDisplay }}">
+                                {{ form_text('institute_name', input_old('institute_name'), {'class' : 'form-control', 'id' : 'institute_name' }) }}
+                            </div>
+                            <div id='institute_dropdown_container' style='display: {{ instDropdownDisplay }}'>
+                                <div class='inst_select2_container'>
+                                    {{ form_select('inst_inquiry_id', instInquiries, input_old('inst_inquiry_id'),
+                                    {'class':'form-control select2-el w100p',
+                                        'id':'inst_inquiry_id',
+                                        'style': 'width:100%;',
+                                        'placeholder' : '-- ' ~ trans('sales::visit.common.institute_placeholder') ~ ' --'}) }}
+                                </div>
+                                <label for="inst_inquiry_id" generated="true" style="display: none;" class="error-visit">This field is required.</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::visit.common.category') }}</label>
+                            <div class="category_dropdown_container">
+                                {{ form_select('inst_category_id',instCategories,input_old('inst_category_id'),{'class':'form-control select2-el w100p','id':'inst_category_id',
+                                    'placeholder' : '-- ' ~ trans('sales::visit.common.category_placeholder') ~ ' --'
+                                }) }}
+                            </div>
+                            <label for="inst_category_id" generated="true" style="display: none;" class="error-visit">This field is required.</label>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::visit.common.student_strength') }}</label>
+                            {{ form_text('student_strength',input_old('student_strength',0),{'class':'form-control','id':'student_strength'}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                        <div class="form-group">
+                            <label> <i class="text-danger">*</i> {{ trans('sales::visit.common.address') }}</label>
+                            {{ form_textarea('address',input_old('address'),{'class':'form-control w100p', 'rows':'5', 'id':'address'}) }}
+                            <label for="address" generated="true" class="error-visit" style="display: none;">This field is required.</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::visit.common.city') }}</label>
+                            {{ form_text('city',input_old('city'),{'class':'form-control autosearch_field','id':'city','data-autosuggesturl': route('api.sales.city')}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::visit.common.state') }}</label>
+                            <div class="state_dropdonw_container">
+                                {{ form_select('state_id',states,input_old('state_id'),{'class':'form-control select2-el w100p','id':'state_id',
+                                    'placeholder' : '-- ' ~ trans('sales::visit.common.state_placeholder') ~ ' --'}) }}
+                            </div>
+                            <label for="state_id" generated="true" class="error-visit" style="display: none;">This field is required.</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::visit.common.contact_person') }}</label>
+                            {{ form_text('contact_person',input_old('contact_person'),{'class':'form-control','id':'contact_person'}) }}
+                        </div>
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::visit.common.designation') }}</label>
+                            {{ form_text('contact_person_desig',input_old('contact_person_desig'),{'class':'form-control autosearch_field','id':'contact_person_desig','data-autosuggesturl':route('api.sales.designation')}) }}
+                        </div>
+                        <div class="form-group">
+                            <label><i class="text-danger">*</i> {{ trans('sales::visit.common.contact_number') }}</label>
+                            {{ form_text('contact_person_phone',input_old('contact_person_phone'),{'class':'form-control','id':'contact_person_phone'}) }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('sales::visit.common.email') }}</label>
+                            {{ form_text('contact_person_email_id',input_old('contact_person_email_id'),{'class':'form-control','id':'contact_person_email_id'}) }}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB',
+        'panelHeader' : true, 'title' : trans('sales::visit.common.additional_details') } %}
+            {% block panelBody %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                        <label>{{ trans('sales::visit.common.remarks') }}</label>
+                        {{ form_textarea('remarks',input_old('remarks'),{'class':'form-control', 'rows':'4','id':'remarks'}) }}
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB' } %}
+            {% block panelBody %}
+                {{ form_button( trans('shared::button.save'),{'type':'submit','class':'btn btn-success btn-sm','name':'button_save', 'id':'button_save'}) }}
+                <a href="{{ route('sales.visit.index')}}" class="btn btn-default btn-sm" id="button_cancel" > {{ trans('shared::button.cancel') }}</a>
+            {% endblock %}
+        {% endembed %}
+        {{ form_close() }}
+    </div>
+{% endblock %}
+{%  block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-inst-call-visit.js') }}"></script>
+{% endblock %}

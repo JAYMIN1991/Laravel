@@ -1,0 +1,193 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('course::offline.index.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('course::offline.index.title') }}
+                <span class="pull-right page-title-button">
+                    <a href="{{ route('course.offline.create') }}">
+                        <button class="btn btn-primary btn-success btn-sm"> {{ trans('shared::button.add') |raw }}</button>
+                    </a>
+                </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    <div id="offline-payment-container">
+        {{ form_open({'route':'course.offline.index', 'id':'form_offline_payment_list', 'method':'get'}) }}
+
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('course::offline.common.select_institute') }}</label>
+                            {{ form_select('institute_id', (institute is defined ? institute : {}), input_get('institute-id', null),
+                            {
+                                'class' : 'form-control w100p',
+                                'data-placeholder' : '-- ' ~ trans('course::offline.common.institute_placeholder') ~ ' --',
+                                'data-action' : route('api.services.suggest.institute', {'for' : 'activeInstituteUsersHavingPublicCourse' }),
+                                'id': 'institute-id',
+                            }) }}
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('course::offline.common.cheque_no') }}</label>
+                            {{ form_text('cheque_no',input_get('cheque_no', ''),{'id':'cheque_no', 'class':'form-control'}) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('course::offline.common.course_name') }} </label>
+                            {{ form_select('course_id',(courses is defined ? courses : {}), input_get('course_id', selectedCourseId), {'class' : 'form-control select2-el w100p',
+                                'placeholder' : '-- ' ~ trans('course::offline.common.records_placeholder') ~ ' --',
+                                'id' : 'course-id'
+                            }) }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="strong">{{ trans('course::offline.index.date.from') }}</label>
+                            <div id="st_date" class="input-group date">
+                                {{ form_text('date_from',input_get('date_from', '' ),{'id':'date_from', 'class':'form-control'}) }}
+                                <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            </div>
+                            <div class="separator top"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="strong">{{ trans('course::offline.index.date.to') }}</label>
+                            <div id="et_date" class="input-group date">
+                                {{ form_text('date_to',input_get('date_to', '' ),{'id':'date_to','class':'form-control'}) }}
+                                <span class="input-group-addon"><i class="fa fa-th"></i></span>
+                            </div>
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-right">
+                        <div class="separator top"></div>
+                        <button type="submit" name="button_search" id="button_search"
+                                class="btn btn-primary btn-lg button_submit"> {{ trans('shared::button.start_search') | raw }}</button>
+                    </div>
+                    <div class="col-md-6 left">
+                        <div class="separator top"></div>
+                        <button type="submit" name="button_export" id="button_export"
+                                class="btn btn-primary btn-lg button_export"> {{ trans('shared::button.export') | raw }}</button>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="records-table table table-bordered table-responsive swipe-horizontal table-primary checkboxs">
+                        <!-- Table heading -->
+                        <thead>
+                        <tr>
+                            <th>{{ trans('course::offline.index.institute') }}</th>
+                            <th>{{ trans('course::offline.index.course') }}</th>
+                            <th>{{ trans('course::offline.index.coupon_code') }}</th>
+                            <th>{{ trans('course::offline.index.total_buyer') }}</th>
+                            <th>{{ trans('course::offline.index.amount') }}</th>
+                            <th>{{ trans('course::offline.index.cheque_no') }}</th>
+                            <th>{{ trans('course::offline.index.cheque_date') }}</th>
+                            <th>{{ trans('course::offline.index.bank') }}</th>
+                            <th>{{ trans('course::offline.index.branch') }}</th>
+                            <th>{{ trans('course::offline.index.remark') }}</th>
+                            <th>{{ trans('course::offline.common.action') }}</th>
+
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+                        <!-- Table body -->
+                        <tbody>
+                        {% if offlinePaymentRecords | length > 0 %}
+                            {% for  records in offlinePaymentRecords %}
+                                <tr class="selectable">
+                                    <td>{{ records.user_school_name }}</td>
+                                    <td>
+                                        {{ records.course_name }}
+                                    </td>
+                                    <td>
+                                        {% if records.coupon_codes %}
+                                            <a href="#" class="fs16 toggle"><i class="fa fa-plus-square"></i></a><br>
+                                            <div style="display: none;">
+                                                <div>{{ records.coupon_codes |raw }}</div>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ records.total_buyer }}</td>
+                                    <td>{{ records.amount_paid }}</td>
+                                    <td>{{ records.instrument_no }}</td>
+                                    <td>{{ records.instrument_date }}</td>
+                                    <td>{{ records.instrument_issuer_name }}</td>
+                                    <td>{{ records.instrument_issuer_sub }}</td>
+                                    <td>{{ records.remarks }}</td>
+                                    {% if records.is_coupon_generated == 0 %}
+                                        <td>
+                                            <a href="{{ route('course.offline.edit', records.offline_payment_id) }}"
+                                               class="btn btn-info btn-xs btn-stroke btn-primary" data-tooltip="true"
+                                               title="{{ trans('course::offline.common.edit') }}"><i
+                                                        class="fa fa-edit"></i> </a>
+
+                                            <a id="btn-delete" href="javascript:void(null)"
+                                               data-action="{{ route("course.offline.destroy", {'id' : records.offline_payment_id}) }}"
+                                               class="btn btn-danger btn-xs btn-stroke delete-promotion"
+                                               data-tooltip="true"
+                                               title="{{ trans('course::offline.common.remove_it') }}"
+                                               data-target="self"
+                                               data-method="delete"
+                                               data-confirm="{{ trans('shared::message.alert.confirm_delete') }}"
+                                               data-csrf="{{ csrf_token() }}"> <i class="fa fa-ban"></i> </a>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            <a href="javascript:void(null)"
+                                               data-action="{{ route("course.offline.export", {'id' : records.offline_payment_id}) }}"
+                                               data-id="{{ records.offline_payment_id }}"
+                                               class="btn btn-xs btn-info export_offline_coupon"
+                                               title="Export coupon code"><i class="fa fa-download"></i> </a>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="11" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+                {% if offlinePaymentRecords | length > 0 %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="dataTables_info">
+                                {{ paginator_status(offlinePaymentRecords) | raw }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dataTables_paginate paging_bootstrap">
+                                {{ offlinePaymentRecords.links() | raw }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endblock %}
+        {% endembed %}
+
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-offline_payment.js') }}"></script>
+{% endblock %}

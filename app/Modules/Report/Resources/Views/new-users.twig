@@ -1,0 +1,100 @@
+{% extends "layouts.backoffice-default" %}
+
+{% block title trans('report::new-users.index.title') %}
+
+{% block pageHead %}
+    {% include "widgets.bootstrap-panel" with {'panelHeader' : 'true', 'title' : ('<h3>' ~ trans('report::new-users.index.title') ~ '</h3>'), 'classes' : 'margin-bottom-none'} %}
+{% endblock %}
+
+{% block pageBody %}
+    <div id="new_user_controller">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'method' : 'GET', 'class' : 'innerAll', 'id' : 'search_new_user_form', 'role' : 'form'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="separator top"></div>
+                        <label class="strong">{{ trans('report::new-users.index.first_name') }}</label>
+                        {{ form_text('first_name',input_get('first_name', ''),{'id':'first_name', 'class':'form-control'}) }}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="separator top"></div>
+                        <label class="strong">{{ trans('report::new-users.index.last_name') }}</label>
+                        {{ form_text('last_name',input_get('last_name', '' ),{'id':'last_name','class':'form-control'}) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="separator top"></div>
+                        <label class="strong">{{ trans('report::new-users.index.user_name') }}</label>
+                        {{ form_text('user_name',input_get('user_name', '' ),{'id':'user_name', 'class':'form-control'}) }}
+                        {{ form_hidden('date_from' ,input_get('date_from', '' ) ,{'type':'hidden'}) }}
+                        {{ form_hidden('date_to' ,input_get('date_to', '' ) ,{'type':'hidden'}) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="innerLR">
+                            <div class="separator top"></div>
+                            <button name="form_submit" id="bsearch" class="btn btn-primary" type="submit" value="search">{{ trans('shared::button.start_search') | raw}}</button>
+                            {% if canExport is defined and canExport %}
+                                <button name="form_submit" id="bexport" class="btn btn-info" type="submit" value="export">{{ trans('shared::button.export') | raw}}</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="col-separator-h"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB',
+        } %}
+            {% block panelBody %}
+                <table class="table table-bordered table-condensed table-striped table-primary checkboxs margin-bottom-none">
+                    <thead>
+                    <tr>
+                        <th>{{ trans('report::new-users.index.name') }}</th>
+                        <th>{{ trans('report::new-users.index.user_name') }}</th>
+                        <th>{{ trans('report::new-users.index.mobile') }}</th>
+                        <th>{{ trans('report::new-users.index.institute') }}</th>
+                        <th>{{ trans('report::new-users.index.courses') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if users is defined and users.total > 0 %}
+                        {% for user in users %}
+                            <tr>
+                                <td class="word-wrap-break max-width-200">{{ user.user_name }}</td>
+                                <td>{{ user.user_login }}</td>
+                                <td>{{ user.user_mobile }}</td>
+                                <td class="word-wrap-break max-width-200">{{ user.user_school_name is not empty ? user.user_school_name :  user.institute }}</td>
+                                <td class="word-wrap-break max-width-200">{{ user.courses }}</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="dataTables_info" id="DataTables_Table_4_info">
+                                    {{ paginator_status(users) | raw }}
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="dataTables_paginate paging_bootstrap">{{ users.render() |raw }}</div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="center">
+                                <h4>{{ trans('report::new-users.index.user_not_found') }}</h4>
+                            </td>
+                        </tr>
+                        </tbody>
+                        </table>
+                    {% endif %}
+                <div class="clearfix"></div>
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('course::promotion.show.title') }} {% endblock %}
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('course::promotion.show.title') }}
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+{% block pageBody %}
+    <div id="promotion-index-container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'center margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                    <h3 class="">{{ courseDetails.course_name }}</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="innerT lead">
+                                {{ (courseDetails.course_is_free == 1 ? trans('course::promotion.common.free') :  '<i class="fa fa-rupee "></i>' ~ courseDetails.amount)| raw }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="innerT lead">Self paced</p>
+                        </div>
+                    </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="separator top"></div>
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true', 'classes' : 'margin-top-none margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route' : ['course.promotion.store-or-update', courseId] ,'method' : 'put'} ) }}
+                    {% if promotionLocations | length > 0  %}
+                        <div class="col-sm-6 padding10">
+                            {% for location in promotionLocations %}
+                                <div class="form-group">
+                                    <div class="checkbox">
+                                        <label>
+                                            {% set checkedStatus = (location.promo_loc_id in coursePromotionLocations ? true : false) %}
+
+                                            {{ form_checkbox('location[]', location.promo_loc_id, checkedStatus) }}
+                                            {{ location.location_name }}
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-sm-6 padding10">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="display_order">Display Order</label>
+                                    <div class="col-sm-6">
+                                        {{ form_text('display_order', courseDetails.course_promotion_rank, {'id':'display_order', 'class' : 'form-control'}) }}
+                                    </div>
+                                </div>
+                            </div>
+                    {% endif %}
+                <div class="col-sm-12 center">
+                    <button name="submit" class="btn btn-primary">{{ trans('shared::button.store') | raw }}</button>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+    </div>
+{% endblock %}
+{% block footerScriptPlugins %}
+    {{ parent() }}
+    <script src="{{ elixir('js/page/build-promotion.js') }}"></script>
+{% endblock %}
+
+

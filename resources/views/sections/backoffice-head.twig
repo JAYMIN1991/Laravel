@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="ie lt-ie9 lt-ie8 lt-ie7 app  sidebar-fusion sidebar-kis fo oter-sticky navbar-sticky"> <![endif]-->
+<!--[if IE 7]>
+<html class="ie lt-ie9 lt-ie8 app  sidebar-fusion sidebar-kis footer-sticky navbar-sticky"> <![endif]-->
+<!--[if IE 8]>
+<html class="ie lt-ie9 app  sidebar-fusion sidebar-kis footer-sticky navbar-sticky"> <![endif]-->
+<!--[if gt IE 8]>
+<html class="ie app  sidebar-fusion sidebar-kis footer-sticky navbar-sticky"> <![endif]-->
+
+<!--[if !IE]><!-->
+<html class="paceSimple sidebar-fusion sidebar-kis footer-sticky navbar-sticky">
+<!-- <![endif]-->
+
+
+<head>
+
+    <title>
+        {% if title is defined %}
+            {{ title | raw }}
+        {% else %}
+            {% block title %} Home {% endblock %}
+        {% endif %}
+        | Flinnt BackOffice
+    </title>
+
+    <!-- META : START -->
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="csrf" content="{{ csrf_token() }}">
+    <!-- META PAGE LEVEL : START -->
+    {% if meta is defined %}
+        {{ meta | raw }}
+    {% else %}
+        {% block meta %}
+            <meta name="master-level-default" content="master-level-defualt">
+        {% endblock %}
+    {% endif %}
+    <!-- META PAGE LEVEL : END -->
+    <!-- META : END -->
+
+
+    <!-- STYLE : START -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" rel="stylesheet" type="text/css" />
+
+    <link type="text/css" rel="stylesheet"
+          href="{{ elixir('css/all.css') }}">
+    <!--  Style Skin File Here -->
+    {#   <link type="text/css" rel="stylesheet"
+             href="{{ asset('assets/css/admin/module.admin.stylesheet-complete.skin.flinnt-theme.css') }}"/>
+
+       <!-- STYLE PLUGINS : START-->
+       <link type="text/css" rel="stylesheet"
+             href="{{ asset('assets/library/jquery-ui/css/jquery-ui.min.css') }}">#}
+
+
+    {% if stylePlugins is defined %}
+        {{ stylePlugins | raw }}
+    {% else %}
+        {% block stylePlugins %}
+        {% endblock %}
+    {% endif %}
+    <!-- STYLE PLUGIN : END -->
+
+    <!-- custom style at the end of style plugin -->
+
+    <!-- STYLE PAGE LEVEL : START -->
+    {% if stylePage is defined %}
+        {{ stylePage | raw }}
+    {% else %}
+        {% block stylePage %}
+        {% endblock %}
+    {% endif %}
+    <!-- STYLE PAGE LEVEL : END -->
+
+    <!-- STYLE : END -->
+
+
+    <!-- HEADER SCRIPT : START -->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script type="text/javascript" src="//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- HEADER SCRIPT PLUGIN : START -->
+    {% if headerScriptPlugins is defined %}
+        {{ headerScriptPlugins | raw }}
+    {% else %}
+        {% block headerScriptPlugins %}
+        {% endblock %}
+    {% endif %}
+    <!-- HEADER SCRIPT PLUGIN : END -->
+
+    <!-- HEADER SCRIPT PAGE LEVEL : START -->
+    <script>
+        if (/*@cc_on!@*/ false && document.documentMode === 10) {
+            document.documentElement.className += ' ie ie10';
+        }
+
+        var spinner = '<i class="fa fa-spinner fa-spin"></i>&nbsp;';
+    </script>
+    {% if headerScriptPage is defined %}
+        {{ headerScriptPage | raw }}
+    {% else %}
+        {% block headerScriptPage %}
+        {% endblock %}
+    {% endif %}
+    <!-- HEADER SCRIPT PAGE LEVEL : END -->
+
+    <!-- HEADER SCRIPT : END -->
+
+</head>
+
+{% if body is defined %}
+    {{ body | raw }}
+{% else %}
+    {% block body %}
+    {% endblock %}
+{% endif %}
+</html>

@@ -1,0 +1,97 @@
+{% extends "layouts.backoffice-default" %}
+
+{% block title trans('users::course-invitation.page_title') %}
+
+{% block stylePlugins %}
+    <link rel="stylesheet" href="{{ asset_path('assets/plugins/forms_elements_jasny-fileupload/css/fileupload.css') }}">
+{% endblock %}
+
+{% block pageHead %}
+    {% include "widgets.bootstrap-panel" with {'panelHeader' : 'true', 'title' : '<h4>' ~ trans('users::course-invitation.title') ~ '</h4>', 'classes' : 'margin-bottom-none'} %}
+{% endblock %}
+
+{% block pageBody %}
+    {{ form_open({'method' : 'POST', 'class' : 'form-horizontal', 'enctype' : 'multipart/form-data', 'id' : 'course_invitation_controller'}) }}
+        {{ csrf_field() }}
+        {% embed 'widgets.bootstrap-panel' with {'panelBody' : 'true', 'panelBodyClasses' : 'padding-bottom-none', 'classes' : 'margin-top-none padding-top-none'} %}
+            {% block panelBody %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="strong">{{ trans('users::course-invitation.select_course') }}</label>
+                        <div>
+                            <select name="course_id" id="course_id" style="width: 100%"
+                                    data-action="{{ route_relative('api.services.suggest.courses') }}"
+                                    data-placeholder="{{ trans('users::course-invitation.select_course') }}"
+                                    data-course-selected-id="{{ input_old('course_id') }}"
+                                    data-course-selected-name="{{ input_old('course_name') }}" autofocus="autofocus">
+                            </select>
+                            <div class="separator top"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+        {% embed 'widgets.bootstrap-panel' with {'panelBody' : 'true', 'panelBodyClasses' : 'padding-none', 'classes' : 'margin-top-none'} %}
+            {% block panelBody %}
+                <div class="innerAll bg-white">
+                    <div class="innerLR">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="radio">
+                                    <label class="radio-custom">
+                                        <input name="invite_by" type="radio"
+                                               {% if input_old('invite_by') != 'file' %}checked="checked"{% endif %}
+                                               id="invite_manual" value="manual">
+                                        <i class="fa fa-circle-o"></i> {{ trans('users::course-invitation.index.invite_manually') }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <div class="radio">
+                                    <label class="radio-custom">
+                                        <input name="invite_by" type="radio" id="invite_upload" value="file" {% if input_old('invite_by') == 'file' %}checked="checked"{% endif %}>
+                                        <i class="fa fa-circle-o"></i> {{ trans('users::course-invitation.index.upload_excel') }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="innerAll" id="invite_manual_block">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label for="invite_manual_text">{{ trans('users::course-invitation.index.enter_login_id') }}</label>
+                                <textarea name="invite_manual_text" id="invite_manual_text" class="form-control" rows="15"
+                                          >{{ input_old('invite_manual_text') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="innerAll" id="invite_upload_block">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="file" name="invite_file" class="form-control" style="height: auto !important;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="innerAll bg-info">
+                    <div class="pull-left col-md-6">
+                        <div class="form-group margin-none innerB">
+                            <div class="col-md-2">
+                                <input type="hidden" name="hdninvite" id="hdinvite" />
+                                <button type="submit" class="btn btn-default" name="btn_invite" id="btn_invite_usr" data-action="2">{{ trans('shared::button.send_invitation') | raw}}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            {% endblock %}
+        {% endembed %}
+    {{ form_close() }}
+{% endblock %}
+
+{% block footerScriptPlugins %}
+    <script type="text/javascript" src="{{ elixir('js/page/build-course-invitation.js') }}"></script>
+{% endblock %}

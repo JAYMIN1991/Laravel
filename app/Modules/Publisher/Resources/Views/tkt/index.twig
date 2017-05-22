@@ -1,0 +1,144 @@
+{% extends "layouts.backoffice-default" %}
+{% block title %} {{ trans('publisher::cambridge-tkt-exam.common.title') }} {% endblock %}
+
+{% block pageHead %}
+    {% embed "widgets.bootstrap-panel" with {'classes' : 'margin-top-none margin-bottom-none padding-none-TB',
+    'panelHeader' :  'true', 'panelHeaderClasses' : 'padding-none' } %}
+        {% block panelHeader %}
+            <h4 class="innerAll margin-none clearfix page-title">
+                {{ trans('publisher::cambridge-tkt-exam.common.title') }}
+                <span class="pull-right page-title-button">
+                <a href="{{ route('publisher.cambridge.tkt.create') }}">
+                    <button class="btn btn-success btn-sm"> {{ trans('publisher::cambridge-tkt-exam.common.add') |raw }}</button>
+                </a>
+            </span>
+            </h4>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block pageBody %}
+    <div class="cambridge_tkt_exam_container" id="cambridge_tkt_exam_container">
+        {% embed "widgets.bootstrap-panel" with {'panelBody' : 'true',
+        'classes' : 'margin-bottom-none padding-none-TB'} %}
+            {% block panelBody %}
+                {{ form_open({'route':'publisher.cambridge.tkt.search','id':'frm_user_commission','method':'get'}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('publisher::cambridge-tkt-exam.common.module_name') }}</label>
+                            {{ form_select('module_list_id',moduleListOptions,input_get('module_list_id',null),{'style':'width:100%;',
+                                'class':'form-control select2-el','id':'module_list_id','data-placeholder' : trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+
+                        <div class="col-md-12 padding-none">
+                            <div class="col-md-12 padding-left-none padding-bottom-none">
+                                <div class="form-group">
+                                    <label>{{ trans('publisher::cambridge-tkt-exam.common.date') }}</label>
+                                    {{ form_text('date',input_get('date',null),{'style':'width:100%;', 'class':'form-control','id':'date'}) }}
+                                </div>
+                                <div class="separator bottom"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>{{ trans('publisher::cambridge-tkt-exam.common.city_name') }}</label>
+                            {{ form_select('city_name',cityListOptions,input_get('city_name',null),{'style':'width:100%;','class':'form-control select2-el','id':'city_name','data-placeholder' : trans('publisher::cambridge-tkt-exam.common.any')}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                        <div class="form-group">
+                            <label>{{ trans('publisher::cambridge-tkt-exam.common.url') }}</label>
+                            {{ form_text('url',input_get('url',null),{'style':'width:100%;', 'class':'form-control','id':'url'}) }}
+                        </div>
+                        <div class="separator bottom"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 center">
+                            <div class="form-group">
+                                <button type="submit" name="btnsearch"
+                                        class="btn btn-primary btn-lg"
+                                        value="submit"> {{ trans('shared::button.start_search') |raw }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form_close() }}
+            {% endblock %}
+        {% endembed %}
+        <div class="separator bottom"></div>
+        <div class="panel padding10 panel-default">
+            <div class="widget-body ">
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="visit-table table table-striped table-responsive swipe-horizontal table-primary">
+
+                        <!-- Table heading -->
+                        <thead class="">
+                        <tr>
+                            <th>{{ trans('publisher::cambridge-tkt-exam.common.module_name') }}</th>
+                            <th>{{ trans('publisher::cambridge-tkt-exam.common.city_name') }}</th>
+                            <th>{{ trans('publisher::cambridge-tkt-exam.common.date') }}</th>
+                            <th>{{ trans('publisher::cambridge-tkt-exam.common.url') }}</th>
+                            <th>{{ trans('publisher::cambridge-tkt-exam.common.action') }}</th>
+                        </tr>
+                        </thead>
+                        <!-- // Table heading END -->
+
+                        <!-- Table body -->
+                        <tbody>
+                        {% if cambridgeTKTExamResult | length > 0 %}
+                            {% for  ce in cambridgeTKTExamResult %}
+                                <tr class="selectable">
+                                    <td>{{ ce.test_name }}</td>
+                                    <td>{{ ce.test_location }}</td>
+                                    <td>{{ ce.test_date }} </td>
+                                    <td> {{ ce.test_url }}</td>
+                                    <td>
+                                        <a id="btn-edit-{{ ce.id }}"
+                                           href="{{ route("publisher.cambridge.tkt.edit",ce.id) }}"
+                                           class="btn btn-warning btn-xs btn-stroke" data-tooltip="true"
+                                           title="{{ trans('account::user-commission.index.edit') }}"><i
+                                                    class="fa fa-pencil"></i> </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="center"> {{ trans('shared::message.info.no_records') }} </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                        <!-- // Table body END -->
+                    </table>
+                    <!-- // Table END -->
+                </div>
+
+                {% if cambridgeTKTExamResult %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="dataTables_info" id="DataTables_Table_4_info">
+                                {{ paginator_status(cambridgeTKTExamResult) | raw }}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="dataTables_paginate paging_bootstrap">
+                                {{ cambridgeTKTExamResult.links() | raw }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- // Widget END -->
+
+    </div>
+{% endblock %}
+
+
+{% block footerScriptPlugins %}
+    <script src="{{ elixir('js/page/build-cambridge-tkt-exam-list.js') }}"></script>
+{% endblock %}
